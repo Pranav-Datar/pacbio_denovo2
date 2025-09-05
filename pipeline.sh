@@ -27,3 +27,37 @@ pv SRR8797220.sra.fastq.gz | bioawk -c fastx '{print "PacBio_HiFi," length($seq)
 #"PacBio_HiFi," is just a label (hardcoded string)
 wc -l length.csv
 #prints number of lines in the file
+
+# Visualising read-length distribution
+
+#download the length.csv on the local computer, and do the mentioned steps in R
+setwd("//wsl.localhost/Ubuntu/home/pranavdatar")
+library(ggplot2)
+library(cowplot) #provides addition to ggplot2
+library(scales) #map data to aesthetics
+
+read_length_df <- read.csv("length.csv") #reads the data into the dataframe
+mean_length <- mean(read_length_df$length) #calculates mean length
+
+total_length_plot <- ggplot(read_length_df, aes(x = length)) +
+  geom_histogram(binwidth = 100, fill = "#377eb8", color = "black", alpha = 0.5) +
+  geom_vline(xintercept = mean_length, linetype = "dashed", color = "red", size = 0.3) +
+  scale_x_continuous(labels = comma) +
+  scale_y_continuous(labels = comma) +
+  labs(x = "Read length (bp)", y = "Count",
+       title = "PacBio HiFi Read Length Distribution") +
+  theme_bw()
+print(total_length_plot)
+
+short_length_plot <- ggplot(read_length_df, aes(x = length)) +
+  geom_histogram(binwidth = 50, fill = "#377eb8", color = "black", alpha = 0.5) +
+  geom_vline(xintercept = mean_length, linetype = "dashed", color = "red", size = 0.3) +
+  scale_x_continuous(labels = comma, limits = c(0, 20000)) +
+  scale_y_continuous(labels = comma) +
+  labs(x = "Read length (bp)", y = "Count",
+       title = "PacBio HiFi Reads ≤ 20 kb") +
+  theme_bw()
+print(short_length_plot)
+
+plot <- plot_grid(total_length_plot, short_length_plot, ncol = 1)
+print(plot) #print both the plots in a single image
