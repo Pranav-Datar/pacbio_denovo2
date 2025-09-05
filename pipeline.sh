@@ -61,3 +61,9 @@ print(short_length_plot)
 
 plot <- plot_grid(total_length_plot, short_length_plot, ncol = 1)
 print(plot) #print both the plots in a single image
+
+#assembly statistics
+conda install -c conda-forge -c bioconda assembly-stats
+conda update assembly-stats
+assembly-stats SRR8797220.sra.fastq >> N50_stat
+cat N50_stat 
