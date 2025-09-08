@@ -1,5 +1,5 @@
 conda activate sratoolkit
-prefetch SRR8797220 --output-directory /home/adminiisc/komodo_sra
+prefetch SRR8797220 --output-directory /home/pranav/komodo_sra
 #the sra file is downloaded in /home/adminiisc/komodo_sra
 
 fasterq-dump SRR8797220.sra
