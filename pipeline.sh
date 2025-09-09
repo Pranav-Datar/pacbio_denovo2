@@ -67,3 +67,12 @@ conda install -c conda-forge -c bioconda assembly-stats
 conda update assembly-stats
 assembly-stats SRR8797220.sra.fastq >> N50_stat
 cat N50_stat 
+
+#FastQC
+conda install bioconda::fastqc
+fastqc SRR8797220.sra.fastq.gz
+
+#nanoplot
+conda create -n nanoplot_env -c bioconda -c conda-forge nanoplot
+conda activate nanoplot_env
+NanoPlot --fastq SRR8797220.sra.fastq -o nanoplot_result
