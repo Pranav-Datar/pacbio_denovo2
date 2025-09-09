@@ -26,7 +26,7 @@ pv SRR8797220.sra.fastq.gz | bioawk -c fastx '{print "PacBio_HiFi," length($seq)
 #length($seq) = number of bases in that read.
 #"PacBio_HiFi," is just a label (hardcoded string)
 wc -l length.csv
-#prints number of lines in the file
+#prints number of lines in the file (20,59,680)
 
 # Visualising read-length distribution
 
