@@ -88,3 +88,9 @@ hifiadapterfilt.sh -p SRR8797220 -l 44 -m 97 -o hifi_filtered SRR8797220.sra.fas
 #-m 97: Minimum percent identity between the read segment and the adapter sequence (97%). This ensures only real adapter remnants are removed, not reads with coincidental matches.
 #-o hifi_filtered output directory prefix
 #SRR8797220.sra.fastq.gz: input file
+
+#lenth trimming
+conda activate chopper_env
+chopper -l 1000 -i SRR8797220.sra.filt.fastq.gz | gzip > SRR8797220.sra.filt.lenfilt.fastq.gz
+#filters reads less than 1000 bp
+
