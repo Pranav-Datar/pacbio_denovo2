@@ -81,5 +81,10 @@ NanoPlot --fastq SRR8797220.sra.fastq -o nanoplot_result
 conda install -n base -c conda-forge mamba
 mamba create -n hififilt_env -c bioconda -c conda-forge hifiadapterfilt
 conda activate hififilt_env
-
-
+hifiadapterfilt.sh -p SRR8797220 -l 44 -m 97 -o hifi_filtered SRR8797220.sra.fastq.gz ##make sure that the only input file with the prefix is in current directory. move all other files with the same prefix in some other directory, as this algorithm uses some loop with the prefix)
+#hifiadapterfilt.sh: main script from the GitHub webpage
+#-p prefix for output files
+#-l 44: minimum adapter length match (default: 44. Reads must have ≥44 bp of adapter sequence to be flagged as contaminated.)
+#-m 97: Minimum percent identity between the read segment and the adapter sequence (97%). This ensures only real adapter remnants are removed, not reads with coincidental matches.
+#-o hifi_filtered output directory prefix
+#SRR8797220.sra.fastq.gz: input file
