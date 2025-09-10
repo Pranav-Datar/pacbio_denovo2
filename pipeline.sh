@@ -76,3 +76,10 @@ fastqc SRR8797220.sra.fastq.gz
 conda create -n nanoplot_env -c bioconda -c conda-forge nanoplot
 conda activate nanoplot_env
 NanoPlot --fastq SRR8797220.sra.fastq -o nanoplot_result
+
+#adapter trimming
+conda install -n base -c conda-forge mamba
+mamba create -n hififilt_env -c bioconda -c conda-forge hifiadapterfilt
+conda activate hififilt_env
+
+
