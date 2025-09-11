@@ -98,3 +98,9 @@ chopper -l 1000 -i SRR8797220.sra.filt.fastq.gz | gzip > SRR8797220.sra.filt.len
 conda activate nanoplot_env
 NanoPlot --fastq SRR8797220.sra.filt.lenfilt.fastq.gz -o nanoplot_result_lengthfilt
 
+#assembly using hifiasm
+hifiasm -o assembly_q7 -t 24 SRR8797220.sra.filt.lenfilt2qualfilt7.fastq 2> hifiasm_q7.log
+#-o assembly_q7: states that "assembly_q7" would be the prefix of every output file
+#-t 24: threads
+#SRR8797220.sra.filt.lenfilt2qualfilt7.fastq: input file
+#2> hifiasm_q7.log: stores all the running script in 2> "hifiasm_q7.log" file
