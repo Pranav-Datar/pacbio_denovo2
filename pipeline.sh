@@ -94,3 +94,7 @@ conda activate chopper_env
 chopper -l 1000 -i SRR8797220.sra.filt.fastq.gz | gzip > SRR8797220.sra.filt.lenfilt.fastq.gz
 #filters reads less than 1000 bp
 
+#QC post-trimming
+conda activate nanoplot_env
+NanoPlot --fastq SRR8797220.sra.filt.lenfilt.fastq.gz -o nanoplot_result_lengthfilt
+
