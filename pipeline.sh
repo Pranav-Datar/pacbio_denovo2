@@ -98,6 +98,12 @@ chopper -l 1000 -i SRR8797220.sra.filt.fastq.gz | gzip > SRR8797220.sra.filt.len
 conda activate nanoplot_env
 NanoPlot --fastq SRR8797220.sra.filt.lenfilt.fastq.gz -o nanoplot_result_lengthfilt
 
+#subsampling upto certain depth for few pilot runs
+seqtk sample -s100 SRR16080541.sra.lenfilt10k.fastq 0.33 > SRR16080541.sra.lenfilt10k.subsampled0.33.fastq
+#sample: subcommand that randomly selects a subset of reads
+#-s: sets a random seed for reproducibility (here, 100).
+#0.33: fraction of reads to be kept (here, 33%)
+
 #assembly using hifiasm
 hifiasm -o assembly_q7 -t 24 SRR8797220.sra.filt.lenfilt2qualfilt7.fastq 2> hifiasm_q7.log
 #-o assembly_q7: states that "assembly_q7" would be the prefix of every output file
