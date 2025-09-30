@@ -2,6 +2,16 @@ conda activate sratoolkit
 prefetch SRR8797220 --output-directory /home/pranav/komodo_sra
 #the sra file is downloaded in /home/adminiisc/komodo_sra
 
+sam-dump SRR8797220.sra > SRR8797220.sam
+#creates sam file from sra file
+
+conda activate samtools
+samtools view -bS SRR8797220.sam > SRR8797220.bam
+#creates bam file from sam file
+#view: The primary command for viewing and converting alignment files
+#-b: Specifies that the output format should be BAM
+#-S: input is sam format
+
 fasterq-dump SRR8797220.sra
 #creates fastq file from sra file
 
