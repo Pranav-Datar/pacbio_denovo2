@@ -114,6 +114,8 @@ seqtk sample -s100 SRR16080541.sra.lenfilt10k.fastq 0.33 > SRR16080541.sra.lenfi
 #-s: sets a random seed for reproducibility (here, 100).
 #0.33: fraction of reads to be kept (here, 33%)
 
+filtlong --target_bases 60000000000 SRR16080541.fastq.gz > SRR16080541_40x.fastq
+
 #assembly using hifiasm
 hifiasm -o assembly_q7 -t 24 SRR8797220.sra.filt.lenfilt2qualfilt7.fastq 2> hifiasm_q7.log
 #-o assembly_q7: states that "assembly_q7" would be the prefix of every output file
