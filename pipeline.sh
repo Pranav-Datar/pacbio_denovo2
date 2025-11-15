@@ -65,5 +65,11 @@ conda install -c bioconda -c conda-forge quast -y
 
 quast primary.fasta -o quast_primary
 
+# BUSCO
+conda create -n busco_env -c conda-forge -c bioconda busco=6.0.0
+conda activate busco_env
+busco -i primary.fasta -l primates_odb12 -m genome -o busco_primary
+
+
 
 
