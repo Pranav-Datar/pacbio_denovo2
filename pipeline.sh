@@ -53,3 +53,17 @@ hifiasm -o assembly_q7 -t 24 SRR8797220.sra.filt.lenfilt2qualfilt7.fastq 2> hifi
 #-t 24: threads
 #SRR8797220.sra.filt.lenfilt2qualfilt7.fastq: input file
 #2> hifiasm_q7.log: stores all the running script in 2> "hifiasm_q7.log" file
+
+#converting the assembled genome file to fasta format
+awk '/^S/{print ">"$2"\n"$3}' assembly.bp.p_ctg.gfa > primary.fasta
+
+
+#quality check post-assembly
+conda create -n quast_env python=3.8 -y
+conda activate quast_env
+conda install -c bioconda -c conda-forge quast -y
+
+quast primary.fasta -o quast_primary
+
+
+
