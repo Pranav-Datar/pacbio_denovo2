@@ -73,7 +73,7 @@ conda activate busco_env
 #compleasm
 conda create -n compleasm_env -c conda-forge -c bioconda compleasm
 conda activate compleasm_env
-
+compleasm run -a primary.fasta -o compleasm_output_homo -l primates
 busco -i primary.fasta -l primates_odb12 -m genome -o busco_primary
 
 
