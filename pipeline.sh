@@ -56,7 +56,7 @@ hifiasm -o assembly_q7 -t 24 SRR8797220.sra.filt.lenfilt2qualfilt7.fastq 2> hifi
 
 #converting the assembled genome file to fasta format
 awk '/^S/{print ">"$2"\n"$3}' assembly.bp.p_ctg.gfa > primary.fasta
-
+#it reads the gfa file and writes out the contig sequences in fasta format
 
 #quality check post-assembly
 conda create -n quast_env python=3.8 -y
