@@ -69,6 +69,11 @@ quast primary.fasta -o quast_primary
 # BUSCO
 conda create -n busco_env -c conda-forge -c bioconda busco=6.0.0
 conda activate busco_env
+
+#compleasm
+conda create -n compleasm_env -c conda-forge -c bioconda compleasm
+conda activate compleasm_env
+
 busco -i primary.fasta -l primates_odb12 -m genome -o busco_primary
 
 
