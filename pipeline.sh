@@ -16,6 +16,7 @@ pv SRR8797220.sra.fastq | pigz -c > SRR8797220.sra.fastq.gz
 #nanoplot
 conda create -n nanoplot_env -c bioconda -c conda-forge nanoplot
 conda activate nanoplot_env
+busco --list-datasets
 NanoPlot --fastq SRR8797220.sra.fastq -o nanoplot_result
 
 #adapter trimming
