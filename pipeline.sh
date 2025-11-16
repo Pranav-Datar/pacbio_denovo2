@@ -19,7 +19,7 @@ conda activate nanoplot_env
 busco --list-datasets
 NanoPlot --fastq SRR8797220.sra.fastq -o nanoplot_result
 
-#adapter trimming
+#adapter trimming: not working, giving database error
 conda install -n base -c conda-forge mamba
 mamba create -n hififilt_env -c bioconda -c conda-forge hifiadapterfilt
 conda activate hififilt_env
