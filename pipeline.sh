@@ -19,7 +19,7 @@ conda activate nanoplot_env
 busco --list-datasets
 NanoPlot --fastq SRR8797220.sra.fastq -o nanoplot_result
 
-#adapter trimming: not working, giving database error
+#adapter trimming: not compulsorily required since pacbio sequencer itself cuts off the adapter sequences. HiFiadapterfilt not working, giving database error. try using cutadapt
 conda install -n base -c conda-forge mamba
 mamba create -n hififilt_env -c bioconda -c conda-forge hifiadapterfilt
 conda activate hififilt_env
