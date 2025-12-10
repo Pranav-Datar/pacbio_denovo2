@@ -1,8 +1,7 @@
-conda create -n sratoolkit-c bioconda -c conda-forge sra-tools
+conda create -n sratoolkit -c bioconda -c conda-forge sra-tools
 conda activate sratoolkit
 prefetch SRR8797220 --output-directory /home/pranav/komodo_sra
 #the sra file is downloaded in /home/adminiisc/komodo_sra
-
 fasterq-dump SRR8797220.sra
 #creates fastq file from sra file
 
@@ -16,7 +15,6 @@ pv SRR8797220.sra.fastq | pigz -c > SRR8797220.sra.fastq.gz
 #nanoplot
 conda create -n nanoplot_env -c bioconda -c conda-forge nanoplot
 conda activate nanoplot_env
-busco --list-datasets
 NanoPlot --fastq SRR8797220.sra.fastq -o nanoplot_result
 
 #adapter trimming: not compulsorily required since pacbio sequencer itself cuts off the adapter sequences. HiFiadapterfilt not working, giving database error. try using cutadapt
