@@ -1,3 +1,10 @@
+#downloading files from google drive
+gdown --folder "google_drive_folder_link"
+
+#converting bam to fastq
+conda activate samtools
+samtools fastq input.bam > output.fastq
+
 conda create -n sratoolkit -c bioconda -c conda-forge sra-tools
 conda activate sratoolkit
 prefetch SRR8797220 --output-directory /home/pranav/komodo_sra
