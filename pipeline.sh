@@ -36,6 +36,9 @@ hifiadapterfilt.sh -p SRR8797220 -l 44 -m 97 -o hifi_filtered SRR8797220.sra.fas
 #-o hifi_filtered output directory prefix
 #SRR8797220.sra.fastq.gz: input file
 
+#Count total adapter hits in the sequences
+seqkit locate -p TGCATACTGCGAGTAT 1_A01_output.fastq | wc -l
+#divide the output by the total number of reads from nanoplot output, which will give the % of reads with the respective sequence present
 #lenth trimming
 conda activate chopper_env
 chopper -l 1000 -i SRR8797220.sra.filt.fastq.gz | gzip > SRR8797220.sra.filt.lenfilt.fastq.gz
