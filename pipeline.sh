@@ -44,6 +44,39 @@ conda activate chopper_env
 chopper -l 1000 -i SRR8797220.sra.filt.fastq.gz | gzip > SRR8797220.sra.filt.lenfilt.fastq.gz
 #filters reads less than 1000 bp
 
+#contamination check
+
+#run the fastq file through kraken2
+conda activate kraken2
+(kraken2) [pranav@node01 fastq_output]$ kraken2 \
+> --db ~/k2_pluspfp_db \
+> --threads 48 \
+> --report 1_B01.kraken.report.txt \
+> --output 1_B01.kraken.output.txt \
+> DRR818294.fastq
+
+#interpreting the output
+awk '
+> $4=="U"{unclass=$2}
+> $6=="root"{root=$2}
+> $6=="Archaea"{arch=$2}
+> $6=="Bacteria"{bac=$2}
+> $6=="Viruses"{vir=$2}
+> $6=="Fungi"{fun=$2}
+> $6=="Viridiplantae"{pla=$2}
+> $6=="Homo" && $7=="sapiens"{hum=$2}
+> END{
+> total=unclass+root
+> printf "Category\tPercent\n"
+> printf "Unclassified\t%.4f%%\n",(unclass/total)*100
+> printf "Archaea\t%.4f%%\n",(arch/total)*100
+> printf "Bacteria\t%.4f%%\n",(bac/total)*100
+> printf "Viruses\t%.4f%%\n",(vir/total)*100
+> printf "Fungi\t%.4f%%\n",(fun/total)*100
+> printf "Plants\t%.4f%%\n",(pla/total)*100
+> printf "Homo_sapiens\t%.4f%%\n",(hum/total)*100
+> }' 1_B01.kraken.report.txt
+
 #QC post-trimming
 conda activate nanoplot_env
 NanoPlot --fastq SRR8797220.sra.filt.lenfilt.fastq.gz -o nanoplot_result_lengthfilt
