@@ -48,12 +48,12 @@ chopper -l 1000 -i SRR8797220.sra.filt.fastq.gz | gzip > SRR8797220.sra.filt.len
 
 #run the fastq file through kraken2
 conda activate kraken2
-(kraken2) [pranav@node01 fastq_output]$ kraken2 \
-> --db ~/k2_pluspfp_db \
-> --threads 48 \
-> --report 1_B01.kraken.report.txt \
-> --output 1_B01.kraken.output.txt \
-> DRR818294.fastq
+ kraken2 \
+--db ~/k2_pluspfp_db \
+--threads 48 \
+--report 1_B01.kraken.report.txt \
+--output 1_B01.kraken.output.txt \
+DRR818294.fastq
 
 #interpreting the output
 awk '
