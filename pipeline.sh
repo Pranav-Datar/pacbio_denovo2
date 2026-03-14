@@ -88,6 +88,7 @@ seqtk sample -s100 SRR16080541.sra.lenfilt10k.fastq 0.33 > SRR16080541.sra.lenfi
 #0.33: fraction of reads to be kept (here, 33%)
 
 filtlong --target_bases 60000000000 SRR16080541.fastq.gz > SRR16080541_40x.fastq
+#selectively keeps top reads based on length and quality until it is 60 Gb
 
 #assembly using hifiasm
 hifiasm -o assembly_q7 -t 24 SRR8797220.sra.filt.lenfilt2qualfilt7.fastq 2> hifiasm_q7.log
