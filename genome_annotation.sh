@@ -15,3 +15,11 @@ BuildDatabase -name Vkomo_db GCF_004798865.1_ASM479886v1_genomic.fasta
 #Vkomo_db.nog: sequence grouping information
 #Vkomo_db.njs: job scheduling metadata
 #Vkomo_db.translation: contains translation information
+
+mkdir Vkomo_db
+mv Vkomo_db* ~/Vkomo_db
+
+RepeatModeler -database Vkomo_db/Vkomo_db -threads 40 -LTRStruct > out.log
+#RepeatModeler: discovers transposable elements and repeats de novo
+#database Vkomo_db: tells database to analyse the mentioned database
+#LTRStruct: activates an additional LTR retrotransposon detection pipeline
