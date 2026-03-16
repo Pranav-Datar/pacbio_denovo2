@@ -38,3 +38,23 @@ RepeatMasker -pa 40 -lib RM_2500375.SunMar151620062026/consensi.fa.classified -g
 #-dir repeatmasker_out: output file directory
 #GCF_004798865.1_ASM479886v1_genomic.fasta: input genome
 
+maker -CTL
+#open maker_opts.ctl by 
+nano maker_opts.ctl
+
+#make sure the following:
+#genome=put the fasta.masked from repeatmasker output
+#model_org=remove "all"
+
+#the remaining section should look like:
+#model_org=
+#rmlib=
+#repeat_protein=
+#softmask=1
+#snaphmm=
+#gmhmm=
+#augustus_species=
+
+#to save the file, Ctrl + O, enter and Ctrl + X.
+
+
