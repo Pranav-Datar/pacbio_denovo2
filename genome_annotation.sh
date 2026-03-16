@@ -38,6 +38,8 @@ RepeatMasker -pa 40 -lib RM_2500375.SunMar151620062026/consensi.fa.classified -g
 #-dir repeatmasker_out: output file directory
 #GCF_004798865.1_ASM479886v1_genomic.fasta: input genome
 
+conda create -n maker -c bioconda -c conda-forge maker
+
 maker -CTL
 #open maker_opts.ctl by 
 nano maker_opts.ctl
