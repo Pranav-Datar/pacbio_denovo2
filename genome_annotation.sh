@@ -23,3 +23,18 @@ RepeatModeler -database Vkomo_db/Vkomo_db -threads 40 -LTRStruct > out.log
 #RepeatModeler: discovers transposable elements and repeats de novo
 #database Vkomo_db: tells database to analyse the mentioned database
 #LTRStruct: activates an additional LTR retrotransposon detection pipeline
+
+#output:
+#You will se many RM_* files. The first RM file generated, will have consensi.fa and consensi.fa.classified files, which are the main files.
+
+grep -c ">" consensi.fa.classified
+# This is to count the number of repeat families discovered.
+
+RepeatMasker -pa 40 -lib RM_2500375.SunMar151620062026/consensi.fa.classified -gff -dir repeatmasker_out GCF_004798865.1_ASM479886v1_genomic.fasta
+#RepeatMasker: Program that identifies and annotates repetitive elements in the genome.
+#-pa 40: 40 threads
+#-lib RM_2500375.SunMar151620062026/consensi.fa.classified: path the the consensi.fa.classified file which has the repeat library to be used in the analysis
+#-gff: produce output in GFF format (general feature format). it consists of columns like chr1  RepeatMasker  LINE/L1   120034  120850
+#-dir repeatmasker_out: output file directory
+#GCF_004798865.1_ASM479886v1_genomic.fasta: input genome
+
