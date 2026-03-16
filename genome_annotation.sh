@@ -57,4 +57,7 @@ nano maker_opts.ctl
 
 #to save the file, Ctrl + O, enter and Ctrl + X.
 
+#run maker
+mpiexec -n 40 maker
+
 
