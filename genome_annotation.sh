@@ -60,6 +60,12 @@ nano maker_opts.ctl
 #to save the file, Ctrl + O, enter and Ctrl + X.
 
 #run maker
-mpiexec -n 40 maker
+maker
 
+#output: GCF_004798865.1_ASM479886v1_genomic.fasta_master_datastore_index.log. this file tracks all the annotation jobs
 
+gff3_merge -d GCF_004798865.1_ASM479886v1_genomic.fasta_master_datastore_index.log
+#it scans the datastore index, collects all gene annotations and combines them into one gff3 file
+#look out for GCF_004798865.1_ASM479886v1_genomic.fasta.all.gff file. 
+
+fasta_merge -d GCF_004798865.1_ASM479886v1_genomic.fasta_master_datastore_index.log
