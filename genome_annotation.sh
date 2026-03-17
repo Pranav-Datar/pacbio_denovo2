@@ -65,6 +65,8 @@ maker
 #output: GCF_004798865.1_ASM479886v1_genomic.fasta_master_datastore_index.log. this file tracks all the annotation jobs
 
 gff3_merge -d GCF_004798865.1_ASM479886v1_genomic.fasta_master_datastore_index.log
+fasta_merge -d GCF_004798865.1_ASM479886v1_genomic.fasta_master_datastore_index.log
+maker2zff -n GCF_004798865.1_ASM479886v1_genomic.fasta.all.gff
 #it scans the datastore index, collects all gene annotations and combines them into one gff3 file
 #look out for GCF_004798865.1_ASM479886v1_genomic.fasta.all.gff file. 
 
