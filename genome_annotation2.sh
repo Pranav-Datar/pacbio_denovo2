@@ -17,3 +17,12 @@ STAR \
 --genomeFastaFiles genome/V_komo_genome.fasta \
 --sjdbGTFfile genome/annotation.gtf \
 --sjdbOverhang 149
+
+STAR \
+--runThreadN 50 \
+--genomeDir star_index \
+--readFilesIn transcriptome_data/SRR8735152_1.fastq transcriptome_data/SRR8735152_2.fastq \
+--outFileNamePrefix sample1_ \
+--outSAMtype BAM SortedByCoordinate \
+--twopassMode Basic \
+  --quantMode TranscriptomeSAM
