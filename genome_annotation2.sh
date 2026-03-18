@@ -25,4 +25,11 @@ STAR \
 --outFileNamePrefix sample1_ \
 --outSAMtype BAM SortedByCoordinate \
 --twopassMode Basic \
-  --quantMode TranscriptomeSAM
+--quantMode TranscriptomeSAM
+
+grep "Uniquely mapped reads %" sample1_Log.final.out
+grep "% of reads mapped to multiple loci" sample1_Log.final.out
+grep "% of reads unmapped" sample1_Log.final.out
+
+mkdir star_output
+#move all the files here
