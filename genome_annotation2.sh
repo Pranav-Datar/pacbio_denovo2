@@ -34,14 +34,17 @@ grep "% of reads unmapped" sample1_Log.final.out
 mkdir star_output
 #move all the files here
 
-#downloaded the protein sequences for reptiles mentioned in komodo dragon genome assembly paper. i went to each genome assembly in NCBI, and wget downloaded the protein.faa.gz file from ftp. the protein sequences were decompressed.
-
-#for aligning protein sequences to komodo genome,
-exonerate --model protein2genome --query combined_reptile_proteins.faa --target /home/pranav/genome_assemblies/NCBI_data/V_komodoensis_ncbi/genome/V_komo_genome.fasta --maxintron 10000 --
-showtargetgff yes > exonerate.gff
 
 Trinity \
   --genome_guided_bam sample1_Aligned.sortedByCoord.out.bam \
   --genome_guided_max_intron 10000 \
   --max_memory 50G \
   --CPU 40
+
+  #downloaded the protein sequences for reptiles mentioned in komodo dragon genome assembly paper. i went to each genome assembly in NCBI, and wget downloaded the protein.faa.gz file from ftp. the protein sequences were decompressed.
+
+#make sure that there is no selenocysteine (U) amino acid in it. if its there, replace it with (C), which is the closest and workable substitute
+
+#for aligning protein sequences to komodo genome,
+exonerate --model protein2genome --query combined_reptile_proteins.faa --target /home/pranav/genome_assemblies/NCBI_data/V_komodoensis_ncbi/genome/V_komo_genome.fasta --maxintron 10000 --
+showtargetgff yes > exonerate.gff
