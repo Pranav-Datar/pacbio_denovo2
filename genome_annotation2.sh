@@ -33,3 +33,9 @@ grep "% of reads unmapped" sample1_Log.final.out
 
 mkdir star_output
 #move all the files here
+
+Trinity \
+  --genome_guided_bam sample1_Aligned.sortedByCoord.out.bam \
+  --genome_guided_max_intron 10000 \
+  --max_memory 50G \
+  --CPU 40
