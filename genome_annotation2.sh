@@ -46,5 +46,5 @@ Trinity \
 #make sure that there is no selenocysteine (U) amino acid in it. if its there, replace it with (C), which is the closest and workable substitute
 
 #for aligning protein sequences to komodo genome,
-exonerate --model protein2genome --query combined_reptile_proteins.faa --target /home/pranav/genome_assemblies/NCBI_data/V_komodoensis_ncbi/genome/V_komo_genome.fasta --maxintron 10000 --
-showtargetgff yes > exonerate.gff
+seqkit split -s 500 combined_reptile_proteins.clean.faa -O chunks/
+
