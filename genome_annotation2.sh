@@ -48,3 +48,16 @@ Trinity \
 #for aligning protein sequences to komodo genome,
 seqkit split -s 500 combined_reptile_proteins.clean.faa -O chunks/
 
+conda activate exonerate_env
+for f in combined_reptile_proteins.clean.part_*.faa; do
+  echo "Running $f"
+  exonerate \
+    --model protein2genome \
+    --query $f \
+    --target /home/pranav/genome_assemblies/NCBI_data/V_komodoensis_ncbi/genome/V_komo_genome.fasta \
+    --maxintron 100000 \
+    --showtargetgff yes \
+    --showalignment no \
+    --bestn 1 \
+    > ${f%.faa}.gff
+done
