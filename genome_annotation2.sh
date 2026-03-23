@@ -45,6 +45,7 @@ Trinity \
 
 #make sure that there is no selenocysteine (U) amino acid in it. if its there, replace it with (C), which is the closest and workable substitute
 
+conda create -n blast_env -c bioconda blast
 makeblastdb -in V_komo_genome.fasta -dbtype nucl -out komo_blastdb -max_file_sz 4GB
 
 #for aligning protein sequences to komodo genome,
