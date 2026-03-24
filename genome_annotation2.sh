@@ -47,6 +47,7 @@ Trinity \
 
 conda create -n blast_env -c bioconda blast
 makeblastdb -in V_komo_genome.fasta -dbtype nucl -out komo_blastdb -max_file_sz 4GB
+tblastn -query /home/pranav/genome_assemblies/NCBI_data/V_komodoensis_ncbi/reptile_proteins/combined_reptile_proteins.clean.faa -db komo_blastdb -out blast_hits.tsv -outfmt 6 -evalue 1e-5 -num_threads 40 -max_target_seqs 5
 
 #for aligning protein sequences to komodo genome,
 seqkit split -s 500 combined_reptile_proteins.clean.faa -O chunks/
