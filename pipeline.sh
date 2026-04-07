@@ -59,8 +59,8 @@ cutadapt \
 >   -j 16 \
 >   -g adapter sequence \
 >   -a adapter sequence \
->   -O 10 \
->   -e 0.1 \
+>   -O 14 \
+>   -e 0.05 \
 >   -o brevicauda_combined_adaptertrimmed.fastq \
 >   brevicauda_combined.fastq
 #-j 16: 16 threads
