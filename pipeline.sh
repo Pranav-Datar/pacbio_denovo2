@@ -43,7 +43,7 @@ seqkit locate -p TGCATACTGCGAGTAT 1_A01_output.fastq | wc -l
 #selectively trim out the adapter sequences found at the start and the end of the reads
 seqkit locate -p "adapter_sequence" brevicauda_combined.fastq  > adapter_hits.tsv #get the positions of adapter sequence existence
 seqkit fx2tab -n -l brevicauda_combined.fastq > read_lengths.tsv #extract out the read lengths
-#classify the positions of adapters; the start ones and the end ones
+#classify the positions of adapters; the start ones and the end ones. this step is optional and not compulsory
 awk 'NR==FNR{len[$1]=$2; next}
 {
   start=$5; end=$6; L=len[$1];
