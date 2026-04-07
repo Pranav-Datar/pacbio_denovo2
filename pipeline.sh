@@ -41,7 +41,16 @@ seqkit locate -p TGCATACTGCGAGTAT 1_A01_output.fastq | wc -l
 #divide the output by the total number of reads from nanoplot output, which will give the % of reads with the respective sequence present
 
 #selectively trim out the adapter sequences found at the start and the end of the reads
-seqkit locate -p "adapter_sequence" brevicauda_combined.fastq  > adapter_hits.tsv
+seqkit locate -p "adapter_sequence" brevicauda_combined.fastq  > adapter_hits.tsv #get the positions of adapter sequence existence
+seqkit fx2tab -n -l brevicauda_combined.fastq > read_lengths.tsv #extract out the read lengths
+#classify the positions of adapters; the start ones and the end ones
+awk 'NR==FNR{len[$1]=$2; next}
+{
+  start=$5; end=$6; L=len[$1];
+
+  if (start <= 30) print $1 > "start_hits.txt";
+  else if (end >= (L-30)) print $1 > "end_hits.txt";
+}' read_lengths.tsv adapter_hits.tsv
 
 #length trimming
 conda activate chopper_env
