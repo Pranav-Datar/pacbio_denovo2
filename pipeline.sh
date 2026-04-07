@@ -52,6 +52,23 @@ awk 'NR==FNR{len[$1]=$2; next}
   else if (end >= (L-30)) print $1 > "end_hits.txt";
 }' read_lengths.tsv adapter_hits.tsv
 
+#trim out the start and end adapter sequences
+conda activate cutadapt_env
+
+cutadapt \
+>   -j 16 \
+>   -g adapter sequence \
+>   -a adapter sequence \
+>   -O 10 \
+>   -e 0.1 \
+>   -o brevicauda_combined_adaptertrimmed.fastq \
+>   brevicauda_combined.fastq
+#-j 16: 16 threads
+#-g: read start
+#-a: read end
+#-O 14: only trim in atleast 14 bases match
+#-e 0.05: allow upto 1% mismatches
+
 #length trimming
 conda activate chopper_env
 chopper -l 1000 -i SRR8797220.sra.filt.fastq.gz | gzip > SRR8797220.sra.filt.lenfilt.fastq.gz
