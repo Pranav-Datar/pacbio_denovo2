@@ -40,7 +40,7 @@ hifiadapterfilt.sh -p SRR8797220 -l 44 -m 97 -o hifi_filtered SRR8797220.sra.fas
 seqkit locate -p TGCATACTGCGAGTAT 1_A01_output.fastq | wc -l
 #divide the output by the total number of reads from nanoplot output, which will give the % of reads with the respective sequence present
 
-#selectively trim out the adapter sequences found at the start and the end of the reads
+#selectively trim out the adapter sequences found at the start and the end of the reads. This is optional, just for eyeballing
 seqkit locate -p "adapter_sequence" brevicauda_combined.fastq  > adapter_hits.tsv #get the positions of adapter sequence existence
 seqkit fx2tab -n -l brevicauda_combined.fastq > read_lengths.tsv #extract out the read lengths
 #classify the positions of adapters; the start ones and the end ones. this step is optional and not compulsory
@@ -56,13 +56,13 @@ awk 'NR==FNR{len[$1]=$2; next}
 conda activate cutadapt_env
 
 cutadapt \
->   -j 16 \
->   -g adapter sequence \
->   -a adapter sequence \
->   -O 14 \
->   -e 0.05 \
->   -o brevicauda_combined_adaptertrimmed.fastq \
->   brevicauda_combined.fastq
+-j 16 \
+-g adapter sequence \
+-a adapter sequence \
+-O 14 \
+-e 0.05 \
+-o brevicauda_combined_adaptertrimmed.fastq \
+brevicauda_combined.fastq
 #-j 16: 16 threads
 #-g: read start
 #-a: read end
