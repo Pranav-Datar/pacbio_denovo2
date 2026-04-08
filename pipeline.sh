@@ -162,5 +162,8 @@ blobtools create \
   --meta meta.json \
   my_dataset
 
-
+blobtools view \
+  --plot \
+  --view snail \
+  my_dataset
 
