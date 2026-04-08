@@ -148,7 +148,19 @@ conda create -n compleasm_env -c conda-forge -c bioconda compleasm
 conda activate compleasm_env
 compleasm run -a primary.fasta -o compleasm_output_homo -l primates
 
+#snail plot
+conda activate blobtoolkit_env
+nano meta.json
+#write the following in it:
+#{
+#  "id": "komodo_genome",
+#  "name": "Varanus komodoensis"
+#}
 
+blobtools create \
+  --fasta /home/pranav/genome_assemblies/NCBI_data/V_komodoensis_ncbi/genome/V_komo_genome.fasta \
+  --meta meta.json \
+  my_dataset
 
 
 
