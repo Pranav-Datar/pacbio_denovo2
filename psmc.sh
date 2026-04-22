@@ -48,3 +48,8 @@ splitfa consensus.psmcfa > split.psmcfa
 psmc -N25 -t10 -r5 -p "4+10*2+4+6" \
   -o result.psmc \
   consensus.psmcfa
+
+  seq 1 100 | xargs -I{} -P 10 \
+  psmc -N25 -t10 -r5 -b -p "4+10*2+4+6" \
+  -o bootstrap_{}.psmc \
+  split.psmcfa
