@@ -44,3 +44,7 @@ seqtk seq -F 'I' consensus.fa > consensus.fq
 fq2psmcfa -q20 consensus.fq > consensus.psmcfa
 
 splitfa consensus.psmcfa > split.psmcfa
+
+psmc -N25 -t10 -r5 -p "4+10*2+4+6" \
+  -o result.psmc \
+  consensus.psmcfa
