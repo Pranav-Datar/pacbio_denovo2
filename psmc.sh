@@ -10,3 +10,6 @@ pbmm2 align reference.mmi SRR8797220.fastq V_komo_aligned.bam --preset HIFI --so
 #SRR8797220.fastq: input reads
 #V_komo_aligned_bam: output
 #--sort: for sorting
+
+#Now, variant calling. But before that, ensure that you have Sorted BAM, Indexed BAM (.bai), Reference FASTA and Indexed FASTA (.fai)
+
