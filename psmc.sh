@@ -38,3 +38,5 @@ bcftools consensus \
 >   -I \
 >   variants.filtered.vcf.gz \
 >   > consensus.fa
+
+seqtk seq -F 'I' consensus.fa > consensus.fq
