@@ -12,4 +12,5 @@ pbmm2 align reference.mmi SRR8797220.fastq V_komo_aligned.bam --preset HIFI --so
 #--sort: for sorting
 
 #Now, variant calling. But before that, ensure that you have Sorted BAM, Indexed BAM (.bai), Reference FASTA and Indexed FASTA (.fai)
-
+conda activate longshot_env
+longshot --bam V_komo_aligned.bam --ref V_komo_genome.fasta --out variants.vcf
