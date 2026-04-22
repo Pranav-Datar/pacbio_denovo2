@@ -18,6 +18,12 @@ longshot --bam V_komo_aligned.bam --ref V_komo_genome.fasta --out variants.vcf
 conda activate bcftools_env
 
 bgzip variants.vcf
+
+bcftools consensus \
+  -f V_komo_genome.fasta \
+  -I \
+  variants.filtered.vcf.gz \
+  > consensus.fa
 tabix -p vcf variants.vcf.gz
 
 bcftools filter \
@@ -26,3 +32,9 @@ bcftools filter \
 >   -Oz -o variants.filtered.vcf.gz
 
 tabix -p vcf variants.filtered.vcf.gz
+
+bcftools consensus \
+>   -f V_komo_genome.fasta \
+>   -I \
+>   variants.filtered.vcf.gz \
+>   > consensus.fa
