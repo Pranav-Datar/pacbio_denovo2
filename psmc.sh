@@ -53,3 +53,9 @@ psmc -N25 -t10 -r5 -p "4+10*2+4+6" \
   psmc -N25 -t10 -r5 -b -p "4+10*2+4+6" \
   -o bootstrap_{}.psmc \
   split.psmcfa
+
+cat result.psmc bootstrap_*.psmc > combined.psmc
+
+psmc_plot.pl  -u 7.9e-9 -g 12 komodo combined.psmc
+
+epstopdf komodo.eps
