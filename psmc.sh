@@ -64,6 +64,7 @@ conda activate psmc_env
 fq2psmcfa -q20 consensus.fq > consensus.psmcfa
 #-q0 for preventing unecessary masking as qualities are anyways fake
 
+#split the file for bootstrapping
 splitfa consensus.psmcfa > split.psmcfa
 
 psmc -N25 -t10 -r5 -p "4+10*2+4+6" \
