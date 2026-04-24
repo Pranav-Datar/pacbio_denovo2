@@ -71,6 +71,11 @@ psmc -N25 -t10 -r5 -p "4+10*2+4+6" \
   -o result.psmc \
   consensus.psmcfa
 
+  #N25: 25 iterations
+  #t10: the upper timing bound
+  #-r5: recombination/mutation ratio
+  #-p "4+10*2+4+6": division of the time bins 
+
   seq 1 100 | xargs -I{} -P 10 \
   psmc -N25 -t10 -r5 -b -p "4+10*2+4+6" \
   -o bootstrap_{}.psmc \
