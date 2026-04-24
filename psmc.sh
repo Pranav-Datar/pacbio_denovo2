@@ -10,16 +10,18 @@ pbmm2 align reference.mmi SRR8797220.fastq V_komo_aligned.bam --preset HIFI --so
 #SRR8797220.fastq: input reads
 #V_komo_aligned_bam: output
 #--sort: for sorting
-
+conda deactivate
 #Now, variant calling. But before that, ensure that you have Sorted BAM, Indexed BAM (.bai), Reference FASTA and Indexed FASTA (.fai)
 
 #For indexing the genome,
 conda activate samtools
 samtools faidx #genome file
+conda deactivate
 
 #variant calling for finding out where are the variants across the diploid genome
 conda activate longshot_env
 longshot --bam V_komo_aligned.bam --ref V_komo_genome.fasta --out variants.vcf
+conda deactivate
 
 conda activate bcftools_env
 
