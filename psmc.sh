@@ -57,8 +57,12 @@ conda deactivate
 #psmc requires fastq file and not fasta file. so add dummy score "I" and convert it to fastq
 conda activate seqtk_env
 seqtk seq -F 'I' consensus.fa > consensus.fq
+conda deactivate
 
+#convert to psmc input file
+conda activate psmc_env
 fq2psmcfa -q20 consensus.fq > consensus.psmcfa
+#-q0 for preventing unecessary masking as qualities are anyways fake
 
 splitfa consensus.psmcfa > split.psmcfa
 
