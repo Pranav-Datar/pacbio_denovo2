@@ -45,6 +45,7 @@ bcftools filter \
 #index the filtered vcf file
 tabix -p vcf variants.filtered.vcf.gz
 
+#now using the filtered vcf file, make a diploid consensus genome for psmc which will have the info about homozygotes and heterozygotes based on IUPAC codes
 bcftools consensus \
 >   -f V_komo_genome.fasta \
 >   -I \
