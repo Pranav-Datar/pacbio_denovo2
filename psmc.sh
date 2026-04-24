@@ -33,9 +33,12 @@ tabix -p vcf variants.vcf.gz
 bcftools consensus \
   -f V_komo_genome.fasta \
   -I \
-  variants.filtered.vcf.gz \
+  variants.vcf.gz \
   > consensus.fa
-
+#Apply variants to the reference genome to reconstruct a sample-specific diploid sequence, required by psmc. It contains the homozygous and heterozygous sites.
+#-f: specifies reference genome
+#-I: applies IUPAC codes
+#variants.vcf.gz: input vcf
 
 bcftools filter \
 >   -i 'QUAL>=30 && FORMAT/DP>=4 && FORMAT/GQ>=10' \
