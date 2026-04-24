@@ -28,21 +28,11 @@ conda activate bcftools_env
 bgzip variants.raw.vcf > variants.raw.vcf.gz
 #for compressing the vcf file
 
-tabix -p vcf variants.vcf.gz
-
-bcftools consensus \
-  -f V_komo_genome.fasta \
-  -I \
-  variants.vcf.gz \
-  > consensus.fa
-#Apply variants to the reference genome to reconstruct a sample-specific diploid sequence, required by psmc. It contains the homozygous and heterozygous sites.
-#-f: specifies reference genome
-#-I: applies IUPAC codes
-#variants.vcf.gz: input vcf
+tabix -p vcf variants.raw.vcf.gz
 
 bcftools filter \
 >   -i 'QUAL>=30 && FORMAT/DP>=4 && FORMAT/GQ>=10' \
->   variants.vcf.gz \
+>   variants.raw.vcf.gz \
 >   -Oz -o variants.filtered.vcf.gz
 
 tabix -p vcf variants.filtered.vcf.gz
