@@ -28,6 +28,7 @@ conda activate bcftools_env
 bgzip variants.raw.vcf > variants.raw.vcf.gz
 #for compressing the vcf file
 
+#index the vcf file
 tabix -p vcf variants.raw.vcf.gz
 
 bcftools filter \
@@ -41,6 +42,7 @@ bcftools filter \
 #FORMAT/GQ>=10 genotype quality
 #Oz: output in compressed format
 
+#index the filtered vcf file
 tabix -p vcf variants.filtered.vcf.gz
 
 bcftools consensus \
