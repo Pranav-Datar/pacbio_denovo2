@@ -20,12 +20,12 @@ conda deactivate
 
 #variant calling for finding out where are the variants across the diploid genome
 conda activate longshot_env
-longshot --bam V_komo_aligned.bam --ref V_komo_genome.fasta --out variants.vcf
+longshot --bam V_komo_aligned.bam --ref V_komo_genome.fasta --out variants.raw.vcf
 conda deactivate
 
 conda activate bcftools_env
 
-bgzip variants.vcf
+bgzip variants.raw.vcf > variants.raw.vcf.gz
 #for compressing the vcf file
 
 tabix -p vcf variants.vcf.gz
