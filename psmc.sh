@@ -35,6 +35,12 @@ bcftools filter \
 >   variants.raw.vcf.gz \
 >   -Oz -o variants.filtered.vcf.gz
 
+#-i: keeps variants only if the below conditions are true
+#QUAL>=30 site level confidence 
+#FORMAT/DP>=4  depth per sample (number of reads covering per position)
+#FORMAT/GQ>=10 genotype quality
+#Oz: output in compressed format
+
 tabix -p vcf variants.filtered.vcf.gz
 
 bcftools consensus \
