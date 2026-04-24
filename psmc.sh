@@ -26,13 +26,16 @@ conda deactivate
 conda activate bcftools_env
 
 bgzip variants.vcf
+#for compressing the vcf file
+
+tabix -p vcf variants.vcf.gz
 
 bcftools consensus \
   -f V_komo_genome.fasta \
   -I \
   variants.filtered.vcf.gz \
   > consensus.fa
-tabix -p vcf variants.vcf.gz
+
 
 bcftools filter \
 >   -i 'QUAL>=30 && FORMAT/DP>=4 && FORMAT/GQ>=10' \
