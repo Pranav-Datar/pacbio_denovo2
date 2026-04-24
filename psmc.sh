@@ -52,6 +52,10 @@ bcftools consensus \
 >   variants.filtered.vcf.gz \
 >   > consensus.fa
 
+conda deactivate
+
+#psmc requires fastq file and not fasta file. so add dummy score "I" and convert it to fastq
+conda activate seqtk_env
 seqtk seq -F 'I' consensus.fa > consensus.fq
 
 fq2psmcfa -q20 consensus.fq > consensus.psmcfa
