@@ -81,6 +81,10 @@ psmc -N25 -t10 -r5 -p "4+10*2+4+6" \
   -o bootstrap_{}.psmc \
   split.psmcfa
 
+  #rereuns psmc 100 times
+  #P 10: runs 10 jobs at a time
+  #-b: bootstrap run
+
 cat result.psmc bootstrap_*.psmc > combined.psmc
 
 psmc_plot.pl  -u 7.9e-9 -g 12 komodo combined.psmc
