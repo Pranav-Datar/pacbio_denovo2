@@ -32,7 +32,7 @@ bgzip variants.raw.vcf > variants.raw.vcf.gz
 tabix -p vcf variants.raw.vcf.gz
 
 bcftools filter \
->   -i 'QUAL>=30 && FORMAT/DP>=4 && FORMAT/GQ>=10' \
+>   -i 'QUAL>=30 && FORMAT/DP>=40 && FORMAT/GQ>=10' \
 >   variants.raw.vcf.gz \
 >   -Oz -o variants.filtered.vcf.gz
 
