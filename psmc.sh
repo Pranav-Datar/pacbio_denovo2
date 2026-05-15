@@ -20,7 +20,7 @@ qualimap bamqc -bam V_salvator_aligned.bam -outdir qualimap_out -nt 40 --java-me
 
 #second, calculate per contig depth
 conda activate samtools
-samtools depth V_salvator_aligned.bam > depth.txt
+samtools coverage V_salvator_aligned.bam > coverage.tsv
 #the sex chromosomes (especially the W chromosome in lizards) will have ~half the total coverage
 
 #For indexing the genome,
