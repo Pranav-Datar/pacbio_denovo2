@@ -21,6 +21,11 @@ qualimap bamqc -bam V_salvator_aligned.bam -outdir qualimap_out -nt 40 --java-me
 #second, calculate per contig depth
 conda activate samtools
 samtools coverage V_salvator_aligned.bam > coverage.tsv
+
+awk '$3 > 100000' coverage.tsv > large_scaffolds.tsv #keep only large contigs as smaller ones can bring in noise.
+
+awk '{print $1, $7}' large_scaffolds.tsv > scaffold_depths.tsv #create a new file with scaffold name and its depth
+
 #the sex chromosomes (especially the W chromosome in lizards) will have ~half the total coverage
 
 #For indexing the genome,
