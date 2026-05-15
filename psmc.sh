@@ -13,6 +13,16 @@ pbmm2 align reference.mmi SRR8797220.fastq V_komo_aligned.bam --preset HIFI --so
 conda deactivate
 #Now, variant calling. But before that, ensure that you have Sorted BAM, Indexed BAM (.bai), Reference FASTA and Indexed FASTA (.fai)
 
+#remove sex chromosomes
+#first, calculate the average genome depth
+conda activate qualimap_env
+qualimap bamqc -bam V_salvator_aligned.bam -outdir qualimap_out -nt 40 --java-mem-size=50G
+
+#second, calculate per contig depth
+conda activate samtools
+samtools depth V_salvator_aligned.bam > depth.txt
+#the sex chromosomes (especially the W chromosome in lizards) will have ~half the total coverage
+
 #For indexing the genome,
 conda activate samtools
 samtools faidx #genome file
