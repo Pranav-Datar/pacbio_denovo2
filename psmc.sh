@@ -91,6 +91,18 @@ conda activate samtools
 samtools faidx #genome file
 conda deactivate
 
+
+#variant calling using deepvariant
+
+#first create a dictionary for the genome assembly, in the same directory where the genome assembly is
+conda activate picard
+picard CreateSequenceDictionary \
+R=reference.fasta \
+O=reference.dict
+
+
+
+
 #variant calling for finding out where are the variants across the diploid genome
 conda activate longshot_env
 longshot --bam V_komo_aligned.bam --ref V_komo_genome.fasta --out variants.raw.vcf
