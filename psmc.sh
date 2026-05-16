@@ -62,6 +62,12 @@ awk '$11 > 100000 {print $6}' z_alignments.paf | sort | uniq > salvator_Z_scaffo
 awk '$3 > 100000 && $7 > 27 && $7 < 37 {print $1}' coverage.tsv > salvator_W_scaffolds.txt
 #This keeps scaffold length > 100000, and depth between 27X-37X (since i saw the smaller peak corresponding to W scaffolds at 27-37X the the graph plotted above.
 
+#Z scaffolds have been identified above.
+
+#now combine the scaffolds to be removed
+cat salvator_Z_scaffolds.txt salvator_W_scaffolds.txt | sort | uniq > sex_scaffolds.txt
+#this removes the duplicates present in both the files and creates an non redundant list of scaffolds to be removed
+
 #For indexing the genome,
 conda activate samtools
 samtools faidx #genome file
