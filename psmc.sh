@@ -82,7 +82,11 @@ V_salvator_aligned.bam \
 $(cat autosomal_scaffolds.txt) \
 > autosomal.bam
 
-#For indexing the genome,
+#for indexing the bam file
+conda activate samtools
+samtools index autosomal.bam
+
+#For indexing the genome (fasta format),
 conda activate samtools
 samtools faidx #genome file
 conda deactivate
