@@ -56,6 +56,12 @@ minimap2 -x asm5 -t 40 reference.mmi /home/pranav/genome_assemblies/NCBI_data/V_
 
 #Extract candidate salvator Z scaffolds, filter strong alignments. This gives candidate Z scaffolds in our genome assembly
 awk '$11 > 100000 {print $6}' z_alignments.paf | sort | uniq > salvator_Z_scaffolds.txt
+
+#now create a file which contains all the sex linked scaffolds, which are to be removed from the input genome.
+#for W scaffolds
+awk '$3 > 100000 && $7 > 27 && $7 < 37 {print $1}' coverage.tsv > salvator_W_scaffolds.txt
+#This keeps scaffold length > 100000, and depth between 27X-37X (since i saw the smaller peak corresponding to W scaffolds at 27-37X the the graph plotted above.
+
 #For indexing the genome,
 conda activate samtools
 samtools faidx #genome file
