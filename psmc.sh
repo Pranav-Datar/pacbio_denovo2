@@ -68,6 +68,20 @@ awk '$3 > 100000 && $7 > 27 && $7 < 37 {print $1}' coverage.tsv > salvator_W_sca
 cat salvator_Z_scaffolds.txt salvator_W_scaffolds.txt | sort | uniq > sex_scaffolds.txt
 #this removes the duplicates present in both the files and creates an non redundant list of scaffolds to be removed
 
+#now create autosomal scaffold list
+#get all scaffolds
+conda activate samtools
+samtools idxstats V_salvator_aligned.bam | cut -f1 > all_scaffolds.txt
+
+#remove sex sscaffolds
+grep -vFf sex_scaffolds.txt all_scaffolds.txt > autosomal_scaffolds.txt
+
+#create autosome only bam
+samtools view -b \
+V_salvator_aligned.bam \
+$(cat autosomal_scaffolds.txt) \
+> autosomal.bam
+
 #For indexing the genome,
 conda activate samtools
 samtools faidx #genome file
