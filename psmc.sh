@@ -92,14 +92,29 @@ samtools faidx #genome file
 conda deactivate
 
 
-#variant calling using deepvariant
+#variant calling using clair3
+conda create -n clair3_env -c bioconda -c conda-forge clair3 -y
+conda activate clair3_env
 
-#first create a dictionary for the genome assembly, in the same directory where the genome assembly is
-conda activate picard
-picard CreateSequenceDictionary \
-R=reference.fasta \
-O=reference.dict
+#the models download step should be only performed during the first run, and not always
+# Create model directory
+mkdir -p ~/clair3_models/hifi_sequel2
+cd ~/clair3_models/hifi_sequel2
+# Download PyTorch checkpoint models
+wget https://www.bio8.cs.hku.hk/clair3/clair3_models_pytorch/hifi_sequel2/pileup.pt
+wget https://www.bio8.cs.hku.hk/clair3/clair3_models_pytorch/hifi_sequel2/full_alignment.pt
 
+#run clair3
+run_clair3.sh \
+--bam_fn /home/pranav/genome_assemblies/NCBI_data/V_salvator_ncbi/SRR16080541/psmc/sex_chr/autosomal.bam \
+--ref_fn /home/pranav/genome_assemblies/NCBI_data/V_salvator_ncbi/SRR16080541/GCA_023646645.1_ASM2364664v1_genomic.fasta \
+--threads 20 \
+--platform hifi \
+--model_path /home/pranav/clair3_models/hifi_sequel2 \
+--output /home/pranav/genome_assemblies/NCBI_data/V_salvator_ncbi/SRR16080541/psmc/sex_chr/clair3_output \
+--include_all_ctgs
+
+#-include_all_ctgs: this is because the input files do not contain chromosome level assembled contigs, but the cotigs are named randomly like (NW....., JAIN.....). It Process all contigs/scaffolds present in the BAM and reference, not just standard human chromosomes.
 
 
 
