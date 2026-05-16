@@ -36,12 +36,12 @@ hifiadapterfilt.sh -p SRR8797220 -l 44 -m 97 -o hifi_filtered SRR8797220.sra.fas
 #-o hifi_filtered output directory prefix
 #SRR8797220.sra.fastq.gz: input file
 
-#Count total adapter hits in the sequences
+#Count total barcode hits in the sequences
 seqkit locate -p TGCATACTGCGAGTAT 1_A01_output.fastq | wc -l
 #divide the output by the total number of reads from nanoplot output, which will give the % of reads with the respective sequence present
 
-#selectively trim out the adapter sequences found at the start and the end of the reads. This is optional, just for eyeballing
-seqkit locate -p "adapter_sequence" brevicauda_combined.fastq  > adapter_hits.tsv #get the positions of adapter sequence existence
+#selectively trim out the barcode sequences found at the start and the end of the reads. This is optional, just for eyeballing
+seqkit locate -p "barcode_sequence" brevicauda_combined.fastq  > barcode_hits.tsv #get the positions of adapter sequence existence
 seqkit fx2tab -n -l brevicauda_combined.fastq > read_lengths.tsv #extract out the read lengths
 #classify the positions of adapters; the start ones and the end ones. this step is optional and not compulsory
 awk 'NR==FNR{len[$1]=$2; next}
@@ -50,15 +50,15 @@ awk 'NR==FNR{len[$1]=$2; next}
 
   if (start <= 30) print $1 > "start_hits.txt";
   else if (end >= (L-30)) print $1 > "end_hits.txt";
-}' read_lengths.tsv adapter_hits.tsv
+}' read_lengths.tsv barcode_hits.tsv
 
 #trim out the start and end adapter sequences
 conda activate cutadapt_env
 
 cutadapt \
 -j 16 \
--g adapter sequence \
--a adapter sequence \
+-g barcode sequence \
+-a barcode sequence \
 -O 14 \
 -e 0.05 \
 -o brevicauda_combined_adaptertrimmed.fastq \
@@ -68,6 +68,34 @@ brevicauda_combined.fastq
 #-a: read end
 #-O 14: only trim in atleast 14 bases match
 #-e 0.05: allow upto 1% mismatches
+
+#correct command for barcode trimming only from the start and end of the read
+cutadapt \
+  -j 16 \
+  -g ^TGCATACTGCGAGTAT \
+  -a TGCATACTGCGAGTAT$ \
+  -O 14 \
+  -e 0.05 \
+  -o brevicauda_combined_adaptertrimmed.fastq \
+  brevicauda_combined.fastq
+
+
+#universal blunt adapter trimming
+
+#check if it is present
+seqkit locate -p ATCTCTCTCTTTTCCTCCTCCTCCGTTGTTGTTGTTGAGAGAGAT input.fastq | head
+
+cutadapt \
+  -j 16 \
+  -g ^ATCTCTCTCTTTTCCTCCTCCTCCGTTGTTGTTGTTGAGAGAGAT \
+  -g ^ATCTCTCTCAACAACAACAACGGAGGAGGAGGAAAAGAGAGAGAT \
+  -a ATCTCTCTCTTTTCCTCCTCCTCCGTTGTTGTTGTTGAGAGAGAT$ \
+  -a ATCTCTCTCAACAACAACAACGGAGGAGGAGGAAAAGAGAGAGAT$ \
+  -O 40 \
+  -e 0.05 \
+  --no-indels \
+  -o reads_adaptertrimmed.fastq \
+  input.fastq
 
 #length trimming
 conda activate chopper_env
