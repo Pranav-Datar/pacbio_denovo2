@@ -35,6 +35,20 @@ q()
 #if 2 peaks then the smaller peak could correspond to W chromosome
 #the sex chromosomes (especially the W chromosome in lizards) will have ~half the total coverage
 
+#now, specifically for Z chromosome, since it is diploid in males, but still with different effective population size,
+
+#download the komodo dragon genome assembly report, which contains information about sex chromosome contigs
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/004/798/865/GCF_004798865.1_ASM479886v1/GCF_004798865.1_ASM479886v1_assembly_report.txt
+
+#filter out those contig names and save them in a .txt file
+grep -E "^scaffold(79|80|89|99|113|164)[[:space:]]" komodo_assembly_report.txt | awk '{print $7}' > komodo_Z_ids.txt
+
+#filter out the sequences for those sex chromosome contigs and save them in a .fasta file
+conda activate samtools
+samtools faidx V_komo_genome.fasta $(cat komodo_Z_ids.txt) > komodo_Z.fa
+
+#note: komodo_Z.fa is in /home/pranav/genome_assemblies/NCBI_data/V_komodoensis_ncbi/genome
+
 #For indexing the genome,
 conda activate samtools
 samtools faidx #genome file
