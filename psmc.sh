@@ -50,6 +50,8 @@ x <- read.table("scaffold_depths.tsv", header=FALSE)
 
 #now, specifically for Z chromosome, since it is diploid in males, but still with different effective population size,
 
+##DO THIS ONLY ONCE. 
+
 #download the komodo dragon genome assembly report, which contains information about sex chromosome contigs
 wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/004/798/865/GCF_004798865.1_ASM479886v1/GCF_004798865.1_ASM479886v1_assembly_report.txt
 
