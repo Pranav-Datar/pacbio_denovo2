@@ -140,6 +140,9 @@ bcftools view \
 merge_output.vcf.gz \
 -Oz -o merge_output_PASS.vcf.gz
 
+#index the newly generated vcf file
+tabix -p vcf merge_output_PASS.vcf.gz
+
 bcftools filter \
 >   -i 'QUAL>=30 && FORMAT/DP>=40 && FORMAT/GQ>=10 && MQ>=20' \
 >   variants.raw.vcf.gz \
