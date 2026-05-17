@@ -131,7 +131,7 @@ conda activate bcftools_env
 bgzip variants.raw.vcf > variants.raw.vcf.gz
 #for compressing the vcf file
 
-#index the vcf file
+#index the vcf file. indexing not required if variants were called using clair3, as it itself does indexing
 tabix -p vcf variants.raw.vcf.gz
 
 bcftools filter \
