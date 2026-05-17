@@ -171,6 +171,11 @@ conda create -n busco_env -c conda-forge -c bioconda busco=6.0.0
 conda activate busco_env
 busco -i primary.fasta -l sauropsida_odb12 -m genome -o busco_primary
 
+#if memory issue, then run
+export _JAVA_OPTIONS="-Xmx24g"
+
+#and then rerun the busco command
+
 #compleasm (it is faster than BUSCO, but not recommended for distant genome assemblies (non-model organisms)
 conda create -n compleasm_env -c conda-forge -c bioconda compleasm
 conda activate compleasm_env
