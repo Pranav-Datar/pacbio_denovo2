@@ -101,12 +101,6 @@ $(cat autosomal_scaffolds.txt) \
 conda activate samtools
 samtools index autosomal.bam
 
-#For indexing the genome (fasta format),
-conda activate samtools
-samtools faidx #genome file
-conda deactivate
-
-
 #variant calling using clair3
 conda create -n clair3_env -c bioconda -c conda-forge clair3 -y
 conda activate clair3_env
