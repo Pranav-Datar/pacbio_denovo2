@@ -134,6 +134,12 @@ bgzip variants.raw.vcf > variants.raw.vcf.gz
 #index the vcf file. indexing not required if variants were called using clair3, as it itself does indexing
 tabix -p vcf variants.raw.vcf.gz
 
+#if using clair3, keep only PASS variants and remove out the else
+bcftools view \
+-f PASS \
+merge_output.vcf.gz \
+-Oz -o merge_output_PASS.vcf.gz
+
 bcftools filter \
 >   -i 'QUAL>=30 && FORMAT/DP>=40 && FORMAT/GQ>=10 && MQ>=20' \
 >   variants.raw.vcf.gz \
