@@ -23,7 +23,9 @@ samtools faidx referencegenome.fasta
 #remove sex chromosomes
 #first, calculate the average genome depth
 conda activate qualimap_env
-qualimap bamqc -bam V_salvator_aligned.bam -outdir qualimap_out -nt 40 --java-mem-size=50G
+qualimap bamqc -bam ____aligned.bam -outdir qualimap_out -nt 40 --java-mem-size=50G
+
+##OR INFER FROM NANOPLOT QC
 
 #second, calculate per contig depth
 conda activate samtools
