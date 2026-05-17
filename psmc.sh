@@ -174,6 +174,13 @@ print "Median:",a[int(NR*0.5)]
 print "95%:",a[int(NR*0.95)]
 }'
 
+#vcf filtering if used clair3
+bcftools filter \
+-i 'QUAL>=10 && FORMAT/DP>=10 && FORMAT/DP<=130 && FORMAT/GQ>=10' \
+merge_output_PASS.vcf.gz \
+-Oz -o merge_output_filtered.vcf.gz
+
+#vcf filtering if used longshot
 bcftools filter \
 >   -i 'QUAL>=30 && FORMAT/DP>=40 && FORMAT/GQ>=10 && MQ>=20' \
 >   variants.raw.vcf.gz \
