@@ -1,14 +1,14 @@
 ##Indexing the genome
 
 conda activate pbmm2_env
-pbmm2 index #genomefile.fasta reference.mmi --preset HIFI
+pbmm2 index genomefile.fasta reference.mmi --preset HIFI
 #genomefile.fasta: input genome
 #reference.mmi: output index
 
 #aligning the raw pacbio reads to the genome
-pbmm2 align reference.mmi SRR8797220.fastq V_komo_aligned.bam --preset HIFI --sort
-#SRR8797220.fastq: input reads
-#V_komo_aligned_bam: output
+pbmm2 align reference.mmi input_raw_reads.fastq ____aligned.bam --preset HIFI --sort
+#input_raw_reads.fastq: input reads
+#____aligned.bam: output
 #--sort: for sorting
 conda deactivate
 #Now, variant calling. But before that, ensure that you have Sorted BAM, Indexed BAM (.bai), Reference FASTA and Indexed FASTA (.fai)
