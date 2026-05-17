@@ -211,7 +211,7 @@ conda deactivate
 
 #convert to psmc input file
 conda activate psmc_env
-fq2psmcfa -q20 consensus.fq > consensus.psmcfa
+fq2psmcfa -q0 consensus.fq > consensus.psmcfa
 #-q0 for preventing unecessary masking as qualities are anyways fake
 
 #split the file for bootstrapping
