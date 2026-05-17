@@ -65,7 +65,7 @@ samtools faidx V_komo_genome.fasta $(cat komodo_Z_ids.txt) > komodo_Z.fa
 #note: komodo_Z.fa is in /home/pranav/genome_assemblies/NCBI_data/V_komodoensis_ncbi/genome
 
 #figure out the z-linked scaffolds in your assembly 
-conda activate minimap2
+conda activate minimap2_env
 minimap2 -x asm5 -t 40 reference.mmi /home/pranav/genome_assemblies/NCBI_data/V_komodoensis_ncbi/genome/komodo_Z.fa > z_alignments.paf
 #-x asm5: assembly-to-assembly alignment. Note: minimap2 is good for general sequence alignment while pbmm2 is specialized for pacbio read alignment
 
