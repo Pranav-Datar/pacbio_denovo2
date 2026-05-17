@@ -143,6 +143,37 @@ merge_output.vcf.gz \
 #index the newly generated vcf file
 tabix -p vcf merge_output_PASS.vcf.gz
 
+#extract distributions for the metrics before so that filter threshold can be determined
+bcftools query \
+-f '%QUAL\t[%DP]\t[%GQ]\t[%AF]\n' \
+merge_output_PASS.vcf.gz > variant_metrics_PASS.tsv
+
+#extract metrics
+
+#QUAL
+awk '{print $1}' variant_metrics_PASS.tsv | sort -n | \
+awk '{a[NR]=$1} END{
+print "5%:",a[int(NR*0.05)]
+print "Median:",a[int(NR*0.5)]
+print "95%:",a[int(NR*0.95)]
+}'
+
+#DP
+awk '{print $2}' variant_metrics_PASS.tsv | sort -n | \
+awk '{a[NR]=$1} END{
+print "5%:",a[int(NR*0.05)]
+print "Median:",a[int(NR*0.5)]
+print "95%:",a[int(NR*0.95)]
+}'
+
+#GQ
+awk '{print $3}' variant_metrics_PASS.tsv | sort -n | \
+awk '{a[NR]=$1} END{
+print "5%:",a[int(NR*0.05)]
+print "Median:",a[int(NR*0.5)]
+print "95%:",a[int(NR*0.95)]
+}'
+
 bcftools filter \
 >   -i 'QUAL>=30 && FORMAT/DP>=40 && FORMAT/GQ>=10 && MQ>=20' \
 >   variants.raw.vcf.gz \
