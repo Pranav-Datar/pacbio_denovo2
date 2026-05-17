@@ -11,7 +11,14 @@ pbmm2 align reference.mmi input_raw_reads.fastq ____aligned.bam --preset HIFI --
 #____aligned.bam: output
 #--sort: for sorting
 conda deactivate
+
 #Now, variant calling. But before that, ensure that you have Sorted BAM, Indexed BAM (.bai), Reference FASTA and Indexed FASTA (.fai)
+#for indexing the reference genome:
+picard CreateSequenceDictionary R=genome.fasta O=reference.dict
+
+conda activate samtools
+samtools faidx referencegenome.fasta
+
 
 #remove sex chromosomes
 #first, calculate the average genome depth
