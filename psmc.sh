@@ -42,8 +42,8 @@ awk '{print $1, $7}' large_scaffolds.tsv > scaffold_depths.tsv #create a new fil
 conda activate r_env
 R
 x <- read.table("scaffold_depths.tsv", header=FALSE)
-hist(x$V2, breaks=40)
-q()
+> hist(x$V2, breaks=40, main="Distribution of Scaffold Coverage Depth", xlab="Coverage Depth (X)", ylab="Number of Scaffolds")
+> q()
 #save the image
 #if 2 peaks then the smaller peak could correspond to W chromosome
 #the sex chromosomes (especially the W chromosome in lizards) will have ~half the total coverage
