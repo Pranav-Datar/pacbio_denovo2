@@ -92,7 +92,7 @@ samtools idxstats V_salvator_aligned.bam | cut -f1 > all_scaffolds.txt
 grep -vFf sex_scaffolds.txt all_scaffolds.txt > autosomal_scaffolds.txt
 
 #create autosome only bam
-samtools view -b \
+samtools view -@ 30 -b \
 V_salvator_aligned.bam \
 $(cat autosomal_scaffolds.txt) \
 > autosomal.bam
