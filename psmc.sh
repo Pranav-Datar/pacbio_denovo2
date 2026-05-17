@@ -20,7 +20,12 @@ conda activate samtools
 samtools faidx referencegenome.fasta
 
 
+################################################################
+################################################################
+
+
 #remove sex chromosomes
+
 #first, calculate the average genome depth
 conda activate qualimap_env
 qualimap bamqc -bam ____aligned.bam -outdir qualimap_out -nt 40 --java-mem-size=50G
@@ -29,10 +34,9 @@ qualimap bamqc -bam ____aligned.bam -outdir qualimap_out -nt 40 --java-mem-size=
 
 #second, calculate per contig depth
 conda activate samtools
-samtools coverage V_salvator_aligned.bam > coverage.tsv
+samtools coverage _____aligned.bam > coverage.tsv
 
 awk '$3 > 100000' coverage.tsv > large_scaffolds.tsv #keep only large contigs as smaller ones can bring in noise.
-
 awk '{print $1, $7}' large_scaffolds.tsv > scaffold_depths.tsv #create a new file with scaffold name and its depth
 
 conda activate r_env
