@@ -97,6 +97,11 @@ V_salvator_aligned.bam \
 $(cat autosomal_scaffolds.txt) \
 > autosomal.bam
 
+
+############################################################################
+#############################################################################
+
+
 #for indexing the bam file
 conda activate samtools
 samtools index autosomal.bam
@@ -119,7 +124,7 @@ run_clair3.sh \
 --ref_fn /home/pranav/genome_assemblies/NCBI_data/V_salvator_ncbi/SRR16080541/GCA_023646645.1_ASM2364664v1_genomic.fasta \
 --threads 20 \
 --platform hifi \
---model_path /home/pranav/clair3_models/hifi_sequel2 \
+--model_path /home/pranav/clair3_models/ \
 --output /home/pranav/genome_assemblies/NCBI_data/V_salvator_ncbi/SRR16080541/psmc/sex_chr/clair3_output \
 --include_all_ctgs
 #-include_all_ctgs: this is because the input files do not contain chromosome level assembled contigs, but the cotigs are named randomly like (NW....., JAIN.....). It Process all contigs/scaffolds present in the BAM and reference, not just standard human chromosomes.
