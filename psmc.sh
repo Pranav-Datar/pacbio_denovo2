@@ -113,9 +113,12 @@ run_clair3.sh \
 --model_path /home/pranav/clair3_models/hifi_sequel2 \
 --output /home/pranav/genome_assemblies/NCBI_data/V_salvator_ncbi/SRR16080541/psmc/sex_chr/clair3_output \
 --include_all_ctgs
-
 #-include_all_ctgs: this is because the input files do not contain chromosome level assembled contigs, but the cotigs are named randomly like (NW....., JAIN.....). It Process all contigs/scaffolds present in the BAM and reference, not just standard human chromosomes.
 
+#you will get 3 output vcf files:
+#1: pileup.vcf.gz: fast heuristic scanning across the genome. Noisier
+#2: full_alignment.vcf.gz: Re-examines difficult candidate regions using deeper neural analysis. Higher precision.
+#3: merge_output.vcf.gz: Combination of the above vcf files. Using this for downstream analyses.
 
 
 #variant calling for finding out where are the variants across the diploid genome
