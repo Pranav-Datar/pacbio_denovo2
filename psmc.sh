@@ -1,8 +1,8 @@
 ##Indexing the genome
 
 conda activate pbmm2_env
-pbmm2 index V_komo_genome.fasta reference.mmi --preset HIFI
-#V_komo_genome.fasta: input genome
+pbmm2 index #genomefile.fasta reference.mmi --preset HIFI
+#genomefile.fasta: input genome
 #reference.mmi: output index
 
 #aligning the raw pacbio reads to the genome
