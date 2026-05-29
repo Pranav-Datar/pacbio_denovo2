@@ -254,3 +254,31 @@ cat result.psmc bootstrap_*.psmc > combined.psmc
 psmc_plot.pl  -u 7.9e-9 -g 12 komodo combined.psmc
 
 epstopdf komodo.eps
+
+#Standardizing PSMC parameters -t and -p
+
+#bigger the t, deeper would be the timescale. increase the value of t until the oldest part of the curve becomes unstable and then back off one step
+
+#For -p: if heterozygosity is low (<2 x 10^-4), use 4+4+4+6
+#medium (2 x 10^-4 to 1 x 10^-4), use 4+10*2+4+6
+#high (>10^3), use 4+25*2+4+6
+
+#count callable bases
+awk 'NR%4==2{
+    seq=$0
+    for(i=1;i<=length(seq);i++)
+        if(substr(seq,i,1)!="N") n++
+}
+END{print n}' consensus.fq
+
+#count heterozygous bases
+awk 'NR%4==2{
+    seq=$0
+    for(i=1;i<=length(seq);i++){
+        b=substr(seq,i,1)
+        if(b ~ /[KMRYSW]/) n++
+    }
+}
+END{print n}' consensus.fq
+
+#heterozgyosity= heterozyg/callable
