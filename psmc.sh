@@ -157,7 +157,7 @@ merge_output.vcf.gz \
 #index the newly generated vcf file
 tabix -p vcf merge_output_PASS.vcf.gz
 
-#extract distributions for the metrics before so that filter threshold can be determined
+# for CLAIR3, extract distributions for the metrics before so that filter threshold can be determined
 bcftools query \
 -f '%QUAL\t[%DP]\t[%GQ]\t[%AF]\n' \
 merge_output_PASS.vcf.gz > variant_metrics_PASS.tsv
@@ -186,6 +186,39 @@ awk '{a[NR]=$1} END{
 print "5%:",a[int(NR*0.05)]
 print "Median:",a[int(NR*0.5)]
 print "95%:",a[int(NR*0.95)]
+}'
+
+#FOR LONGSHOT, use this:
+bcftools query -f '%QUAL\t[%DP]\t[%GQ]\t[%AD]\n' merged.vcf.gz > variants.metrics.tsv
+
+#QUAL
+awk '{print $1}' variants.metrics.tsv | sort -n | \
+awk '
+{a[NR]=$1}
+END{
+print "5% =",a[int(NR*0.05)]
+print "50% =",a[int(NR*0.50)]
+print "95% =",a[int(NR*0.95)]
+}'
+
+#DP
+awk '{print $2}' variants.metrics.tsv | sort -n | \
+awk '
+{a[NR]=$1}
+END{
+print "5% =",a[int(NR*0.05)]
+print "50% =",a[int(NR*0.50)]
+print "95% =",a[int(NR*0.95)]
+}'
+
+#GQ
+awk '{print $3}' variants.metrics.tsv | sort -n | \
+awk '
+{a[NR]=$1}
+END{
+print "5% =",a[int(NR*0.05)]
+print "50% =",a[int(NR*0.50)]
+print "95% =",a[int(NR*0.95)]
 }'
 
 #vcf filtering if used clair3
