@@ -59,7 +59,9 @@ seqkit replace \
 /home/pranav/genome_assemblies/primary_data/V_scalaris/scalaris_reanalysis2/assembly_files/scalaris.assembly.bp.hap2.p_ctg.fasta \
 > scalaris.hap2.pansn.fa
 
-
+#concatenation
+cat /home/pranav/genome_assemblies/pangenome_input/*.pansn.fa \
+> /home/pranav/genome_assemblies/pangenome_input/varanus.fa
 
 
 conda create -n pggb_env -c conda-forge -c bioconda pggb
