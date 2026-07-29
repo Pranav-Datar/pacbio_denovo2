@@ -63,6 +63,12 @@ seqkit replace \
 cat /home/pranav/genome_assemblies/pangenome_input/*.pansn.fa \
 > /home/pranav/genome_assemblies/pangenome_input/varanus.fa
 
+#compression
+bgzip -@ 16 /home/pranav/genome_assemblies/pangenome_input/varanus.fa
+
+#indexing
+conda activate samtools
+samtools faidx varanus.fa.gz
 
 conda create -n pggb_env -c conda-forge -c bioconda pggb
 conda activate pggb_env
