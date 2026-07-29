@@ -70,7 +70,19 @@ bgzip -@ 16 /home/pranav/genome_assemblies/pangenome_input/varanus.fa
 conda activate samtools
 samtools faidx varanus.fa.gz
 
+#check if fragmented contigs are present,  and if present trim them off
+seqkit stats /home/pranav/genome_assemblies/pangenome_input/*.pansn.fa
+
 conda create -n pggb_env -c conda-forge -c bioconda pggb
 conda activate pggb_env
+mkdir -p /home/pranav/genome_assemblies/pggb_partition
 
+partition-before-pggb \
+    -i /home/pranav/genome_assemblies/pangenome_input/varanus.fa.gz \
+    -o /home/pranav/genome_assemblies/pggb_partition \
+    -t 32 \
+    -p 90 \
+    -s 10k
+#-p 90: minimum average nucleotide identity for segments
+#-s 10k: segmenting length for scaffolding the graph (starting seed)
 
