@@ -86,3 +86,60 @@ partition-before-pggb \
 #-p 90: minimum average nucleotide identity for segments
 #-s 10k: segmenting length for scaffolding the graph (starting seed)
 
+mkdir -p commands scripts logs results
+
+awk '/^pggb -i/{flag=1} flag{print}' \
+varanus.fa.gz.c325321.11fba48.8625f7d.smooth.07-29-2026_23:48:35.params.yml \
+> commands/all_commands.txt
+
+perl -0pe 's/\\\n\s*/ /g' commands/all_commands.txt > commands/all_commands_oneline.txt
+
+nano scripts/benchmark_large.slurm
+
+#!/bin/bash
+#SBATCH --job-name=pggb_large
+#SBATCH --partition=compute
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=64
+#SBATCH --mem=300G
+#SBATCH --output=logs/pggb_large_%j.out
+#SBATCH --error=logs/pggb_large_%j.err
+
+set -euo pipefail
+
+source ~/miniconda3/etc/profile.d/conda.sh
+conda activate pggb_env
+
+cd /home/pranav/genome_assemblies/pggb_partition
+
+pggb \
+    -i varanus.fa.gz.c325321.community.1.fa \
+    -o varanus.fa.gz.c325321.community.1.fa.out \
+    -s 10000 \
+    -l 50000 \
+    -p 90 \
+    -c 1 \
+    -K 19 \
+    -F 0.001 \
+    -g 30 \
+    -k 23 \
+    -f 0 \
+    -B 10M \
+    -n 9 \
+    -j 0 \
+    -e 0 \
+    -G 700,1100 \
+    -O 0.001 \
+    -d 100 \
+    -Q Consensus_ \
+    -Y "#" \
+    --threads 64 \
+    --poa-threads 64
+
+#ctrl + o, enter, ctrl + x
+
+sbatch scripts/benchmark_large.slurm
+
+squeue -j #JOBID
+scontrol show job #JOBID
