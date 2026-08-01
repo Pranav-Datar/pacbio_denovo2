@@ -161,3 +161,8 @@ odgi layout \
 -i results/merged.sorted.og \
 -o results/merged.layout.og \
 -t 64
+
+odgi draw \
+    -i results/merged.sorted.og \
+    -c results/merged.layout.lay \
+    -p results/merged.draw.png
