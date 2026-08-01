@@ -143,3 +143,11 @@ sbatch scripts/benchmark_large.slurm
 
 squeue -j #JOBID
 scontrol show job #JOBID
+
+odgi squeeze \
+    -f gfa_list.txt \
+    -o merged.og \
+    -O \
+    -t 32 \
+    -P
+    
