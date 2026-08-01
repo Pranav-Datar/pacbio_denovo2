@@ -150,4 +150,14 @@ odgi squeeze \
     -O \
     -t 32 \
     -P
-    
+
+    odgi sort \
+-i merged.og \
+-o results/merged.sorted.og \
+-P \
+-t 64
+
+odgi layout \
+-i results/merged.sorted.og \
+-o results/merged.layout.og \
+-t 64
