@@ -359,10 +359,19 @@ export _JAVA_OPTIONS="-Xmx24g"
 
 #and then rerun the busco command
 
-#compleasm (it is faster than BUSCO, but not recommended for distant genome assemblies (non-model organisms)
-conda create -n compleasm_env -c conda-forge -c bioconda compleasm
-conda activate compleasm_env
-compleasm run -a primary.fasta -o compleasm_output_homo -l primates
+#assembly evaluation using kmer approach
+
+conda create -n merqury_env -c conda-forge -c bioconda \
+    merqury meryl openjdk -y
+
+conda activate merqury_env
+
+#count kmers
+meryl k=21 count output reads.k21.meryl sample_hifi.fastq.gz
+
+#merqury analysis
+OMP_NUM_THREADS=16 merqury.sh reads.k21.meryl primary.fasta("genome assembly") sample ("output name")
+    
 
 #snail plot
 conda activate blobtoolkit_env
