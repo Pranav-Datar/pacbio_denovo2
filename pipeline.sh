@@ -139,6 +139,32 @@ printf "Homo_sapiens\t%.4f%%\n",(hum/total)*100
 conda activate nanoplot_env
 NanoPlot --fastq SRR8797220.sra.filt.lenfilt.fastq.gz -o nanoplot_result_lengthfilt
 
+#genome analysis from reads
+
+#create kmer spectrum (kmer counting)
+conda create -n jellyfish_env -c conda-forge -c bioconda kmer-jellyfish
+conda activate jellyfish_env
+
+jellyfish count -C -m 21 -s 1000000000 -t 10 *.fastq -o reads.jf
+#-s: memory (here, 1000000000 = 1GB RAM has been used)
+#-t: threads (10 threads here)
+#-m: kmer length (21 generally)
+
+#export kmer count histogram
+jellyfish histo -t 10 reads.jf > reads.histo
+#-t: threads
+
+#genomescope installation
+
+conda install -c conda-forge r-base r-minpack.lm r-argparse #yes, this is needed as well
+git clone https://github.com/tbenavi1/genomescope2.0.git
+cd genomescope2.0/
+Rscript install.R
+
+genomescope.R -i histogram_file -o output_dir -k k-mer_length
+
+#taken from: https://github.com/tbenavi1/genomescope2.0/blob/master/README.md
+
 #subsampling upto certain depth for few pilot runs
 seqtk sample -s100 SRR16080541.sra.lenfilt10k.fastq 0.33 > SRR16080541.sra.lenfilt10k.subsampled0.33.fastq
 #sample: subcommand that randomly selects a subset of reads
