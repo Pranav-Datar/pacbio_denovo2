@@ -165,6 +165,163 @@ genomescope.R -i histogram_file -o output_dir -k k-mer_length
 
 #taken from: https://github.com/tbenavi1/genomescope2.0/blob/master/README.md
 
+1. INTERPRETING COMMON PATTERNS
+
+
+
+Pattern: Large low-frequency peak
+
+Technical: Sequencing errors, adapters, poor read quality.
+
+Biological: Genuine low-coverage or highly heterozygous sequence.
+
+Check: Read QC; compare spectra before and after filtering.
+
+
+
+Pattern: Two peaks with an approximately 1:2 ratio
+
+Technical: Uneven coverage, mixed libraries.
+
+Biological: Diploid heterozygosity.
+
+Check: Estimated coverage, ploidy and independent evidence.
+
+
+
+Pattern: Broad or overlapping peaks
+
+Technical: Low coverage, GC bias, uneven sequencing.
+
+Biological: High heterozygosity, overlapping copy-number classes.
+
+Check: Downsample reads; assess model fit and estimate stability.
+
+
+
+Pattern: High-multiplicity tail
+
+Technical: PCR bias, contamination.
+
+Biological: Repeats, segmental duplications, organelle DNA.
+
+Check: Repeat annotation, taxonomic classification and coverage.
+
+
+
+Pattern: Multiple unexpected peaks
+
+Technical: Mixed libraries, contamination.
+
+Biological: Polyploidy, aneuploidy, copy-number variation.
+
+Check: Analyse libraries separately; consider Smudgeplot or
+
+independent cytogenetic evidence.
+
+
+
+Pattern: Poor model fit
+
+Technical: Low-quality data, unsuitable filtering, low coverage.
+
+Biological: Complex repeats or unmodelled genomic structure.
+
+Check: Inspect residuals; test suitable k-mer lengths/settings.
+
+
+
+Pattern: Implausible genome-size estimate
+
+Technical: Contamination, coverage bias, poor model fit.
+
+Biological: High repeat content, polyploidy.
+
+Check: Compare with flow cytometry, C-values or related species.
+
+2. ASSESSING WHETHER SEQUENCING COVERAGE IS SUFFICIENT
+
+
+
+[ ] Estimate nominal coverage:
+
+Total sequenced bases / expected haploid genome size.
+
+
+
+[ ] Check whether the main peaks are distinguishable and
+
+consistent with the estimated coverage.
+
+
+
+[ ] Assess how well the fitted model describes the observed
+
+spectrum.
+
+
+
+[ ] Downsample reads to different depths and rerun GenomeScope.
+
+
+
+[ ] Check whether genome-size and heterozygosity estimates
+
+stabilise as coverage increases.
+
+
+
+[ ] Compare results across suitable k-mer lengths and
+
+filtering settings.
+
+
+
+NOTE: Low coverage can cause biological peaks to overlap due
+
+to sampling variation. However, merged peaks do not necessarily
+
+indicate insufficient coverage; biological complexity, uneven
+
+coverage and model limitations can produce similar patterns.
+
+3. INDEPENDENT VALIDATION
+
+
+
+Read QC                  : Errors, adapters, read quality.
+
+Flow cytometry / C-value : Independent genome-size estimates.
+
+Smudgeplot               : Ploidy and allele-dosage inference.
+
+BUSCO                    : Conserved gene completeness/duplication.
+
+Read mapping / coverage  : Coverage variation and anomalies.
+
+Repeat annotation        : Repetitive DNA and transposable elements.
+
+Taxonomic classification: Potential contamination.
+
+GENERAL PRINCIPLE
+
+
+
+No single GenomeScope feature uniquely identifies a biological
+
+or technical cause. Interpret the spectrum alongside sequencing
+
+quality, coverage, model fit and independent evidence.
+
+
+
+Treat each explanation as a hypothesis and identify what
+
+additional observation would distinguish it from alternatives.
+
+============================================================
+
+
 #subsampling upto certain depth for few pilot runs
 seqtk sample -s100 SRR16080541.sra.lenfilt10k.fastq 0.33 > SRR16080541.sra.lenfilt10k.subsampled0.33.fastq
 #sample: subcommand that randomly selects a subset of reads
