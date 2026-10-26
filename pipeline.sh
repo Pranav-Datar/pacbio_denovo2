@@ -361,10 +361,10 @@ export _JAVA_OPTIONS="-Xmx24g"
 
 #assembly evaluation using kmer approach
 
-conda create -n merqury_env -c conda-forge -c bioconda \
+conda create -n merqury -c conda-forge -c bioconda \
     merqury meryl openjdk -y
 
-conda activate merqury_env
+conda activate merqury
 
 #count kmers
 meryl k=21 count output reads.k21.meryl sample_hifi.fastq.gz
