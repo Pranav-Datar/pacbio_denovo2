@@ -726,7 +726,7 @@ snakemake \
     --jobs 26 \
     --use-apptainer \
     --apptainer-prefix .apptainer_cache \
-    --apptainer-args "-B /home -B /scratch" \
+    --apptainer-args "-B /home" \
     --latency-wait 120 \
     --restart-times 3
 
@@ -775,7 +775,7 @@ snakemake \
     --jobs 26 \
     --use-apptainer \
     --apptainer-prefix .apptainer_cache \
-    --apptainer-args "-B /home -B /scratch" \
+    --apptainer-args "-B /home" \
     --latency-wait 120 \
     --restart-times 3
 
