@@ -3,11 +3,11 @@
 ###############################################################################
 #
 # SPECIES:              Varanus komodoensis
+# COMPUTE NODE:         node01
 # HPC OS:               Rocky Linux 8.10
-# JOB SCHEDULER:        SLURM 22.05.9
+# EXECUTION MODE:       Local execution (no SLURM submission)
 # CONTAINER RUNTIME:    Apptainer 1.5.5
 # WORKFLOW MANAGER:     Snakemake 8.18.2
-# SLURM PLUGIN:         snakemake-executor-plugin-slurm 2.6.0
 #
 # ANNOTATION APPROACH:
 #   BRAKER4 Evidence-based GeneMark-ETP (ETP)
@@ -23,9 +23,9 @@
 #
 # RESOURCE SETTINGS:
 #   CPUs:             26
-#   SLURM partition:  compute
-#   Default memory:   120000 MB
-#   Maximum runtime:  4320 minutes
+#   Memory limit:     120000 MB
+#   Concurrent jobs:  1
+#   Execution:        Local
 #
 # HOW TO USE THIS DOCUMENT:
 #
@@ -56,14 +56,17 @@
 # Check operating system
 cat /etc/os-release
 
-# Check SLURM version
-sinfo --version
+# Check available CPU threads
+nproc
 
-# Display available partitions
-sinfo
+# Check available memory
+free -h
 
-# Display partition, availability, time limit, nodes, CPUs and memory
-sinfo -o "%P %a %l %D %c %m"
+# Check disk space
+df -h /home
+
+# Check operating system
+cat /etc/os-release
 
 # Check Python version
 python3 --version
@@ -175,11 +178,11 @@ source ~/.bashrc
 #
 # FREQUENCY: Once per HPC account.
 #
-# Snakemake manages the BRAKER4 workflow and submits individual jobs to SLURM.
+# Snakemake manages the BRAKER4 workflow locally.
+# Individual rules are executed directly on the compute node.
 #
 # Versions used:
 #   Snakemake: 8.18.2
-#   SLURM executor plugin: 2.6.0
 ###############################################################################
 
 # Create software directory
@@ -203,14 +206,8 @@ pip install snakemake==8.18.2
 # Install pandas
 pip install pandas
 
-# Install SLURM executor plugin
-pip install snakemake-executor-plugin-slurm==2.6.0
-
 # Verify Snakemake
 snakemake --version
-
-# Verify SLURM plugin
-pip show snakemake-executor-plugin-slurm
 
 # Verify pandas
 pip show pandas
@@ -478,7 +475,7 @@ zcat -f "$RNA_R2" | awk 'END {print "R2 reads:", NR/4}'
 #   - Snakemake metadata
 #   - Container cache
 #   - Annotation results
-#   - SLURM logs
+#   - Local Snakemake and workflow logs
 ###############################################################################
 
 # Create working directory
@@ -604,6 +601,20 @@ mem_of_node = 120000
 max_runtime = 4320
 EOF
 
+# IMPORTANT:
+# BRAKER4 internally reads these configuration keys.
+# They are retained even when Snakemake runs locally.
+#
+# cpus_per_task:
+#   CPU count used by BRAKER4 rules.
+#
+# mem_of_node:
+#   Memory limit used in BRAKER4 rule resource definitions.
+#
+# max_runtime:
+#   Runtime parameter retained for BRAKER4 configuration.
+#   SLURM is not used by the local execution command.
+
 # Verify configuration
 grep -E '^(cpus_per_task|mem_of_node|max_runtime)' config.ini
 
@@ -670,9 +681,8 @@ done
 # on a compute node.
 ###############################################################################
 
-srun -p compute -N 1 -n 1 --mem=1G -t 00:05:00 \
-    apptainer exec docker://alpine:latest cat /etc/os-release
-
+# Test Apptainer directly on node01
+apptainer exec docker://alpine:latest cat /etc/os-release
 
 
 ###############################################################################
@@ -717,19 +727,18 @@ apptainer --version
 ###############################################################################
 
 snakemake \
-    --snakefile ~/software/BRAKER4/Snakefile \
+    --snakefile /home/pranav/software/BRAKER4/Snakefile \
     --directory /home/pranav/genome_assemblies/braker_work \
     --dry-run \
-    --executor slurm \
-    --default-resources slurm_partition=compute mem_mb=120000 \
     --cores 26 \
-    --jobs 26 \
+    --jobs 1 \
+    --resources mem_mb=120000 \
+    --default-resources "tmpdir='/home/pranav/genome_assemblies/braker_work/tmp'" \
     --use-apptainer \
     --apptainer-prefix .apptainer_cache \
     --apptainer-args "-B /home" \
     --latency-wait 120 \
-    --restart-times 3
-
+    --printshellcmds
 # Review:
 #   - Total number of jobs
 #   - Rule dependencies
@@ -766,18 +775,46 @@ export PATH="$HOME/software/apptainer/bin:$PATH"
 export APPTAINER_CACHEDIR=/home/pranav/apptainer_cache
 
 # Submit BRAKER4 workflow
-snakemake \
-    --snakefile ~/software/BRAKER4/Snakefile \
+###############################################################################
+# STEP 18. RUN BRAKER4 LOCALLY
+#
+# FREQUENCY: Once per annotation workflow.
+#
+# IMPORTANT:
+# Run this section inside a Screen session.
+# The workflow executes directly on node01.
+# No SLURM jobs are submitted.
+###############################################################################
+
+# Start a named Screen session
+screen -S braker_new
+
+# Enter working directory
+cd /home/pranav/genome_assemblies/braker_work
+
+# Activate Snakemake environment
+source ~/software/snakemake_env/bin/activate
+
+# Configure Apptainer
+export PATH="$HOME/software/apptainer/bin:$PATH"
+export APPTAINER_CACHEDIR=/home/pranav/apptainer_cache
+
+# Run BRAKER4 locally
+/home/pranav/software/snakemake_env/bin/snakemake \
+    --snakefile /home/pranav/software/BRAKER4/Snakefile \
     --directory /home/pranav/genome_assemblies/braker_work \
-    --executor slurm \
-    --default-resources slurm_partition=compute mem_mb=120000 \
     --cores 26 \
-    --jobs 26 \
+    --jobs 1 \
+    --resources mem_mb=120000 \
+    --default-resources "tmpdir='/home/pranav/genome_assemblies/braker_work/tmp'" \
     --use-apptainer \
     --apptainer-prefix .apptainer_cache \
     --apptainer-args "-B /home" \
     --latency-wait 120 \
-    --restart-times 3
+    --printshellcmds
+
+# Detach from Screen:
+# Press Ctrl+A, then D.
 
 # IMPORTANT:
 # The command above starts the Snakemake master process.
@@ -798,22 +835,34 @@ snakemake \
 # FREQUENCY: Whenever required during annotation.
 ###############################################################################
 
-# Display active and queued jobs
-squeue -u pranav
+###############################################################################
+# STEP 19. MONITOR LOCAL COMPUTATION
+#
+# FREQUENCY: Whenever required during annotation.
+###############################################################################
 
-# Display job ID, name, state, elapsed time and node
-squeue -u pranav -o "%.18i %.20j %.8T %.10M %.10l %.6D %R"
+# Monitor CPU and memory consumption by your processes
+ps -u "$USER" -o pid,ppid,%cpu,%mem,etime,stat,cmd --sort=-%cpu | head -20
 
-# Monitor memory usage of a running job
-# Replace JOBID with the actual SLURM job ID.
-sstat -j JOBID.batch --format=JobID,AveRSS,MaxRSS,AveVMSize,MaxVMSize
+# Check active BRAKER4 processes
+ps -u "$USER" -o pid,%cpu,%mem,etime,cmd | \
+    grep -E 'snakemake|hisat2|samtools|stringtie|gmetp|GeneMark|augustus|optimize_augustus' | \
+    grep -v grep
 
-# Inspect completed job statistics
-sacct -j JOBID --format=JobID,JobName,State,Elapsed,ReqMem,MaxRSS
+# Check Snakemake master process
+pgrep -afu "$USER" snakemake
 
-# Display node-level RAM
-# This reports the node where the command is executed.
+# Check available memory
 free -h
+
+# Check disk space
+df -h /home
+
+# Monitor BRAKER4 output directory
+watch -n 30 'du -sh output/V_komodoensis/'
+
+# Monitor system load
+uptime
 
 
 
@@ -827,40 +876,36 @@ free -h
 screen -ls
 
 # Reattach to BRAKER4 Screen
-screen -r braker4_komodo
+screen -r braker_new
 
 # Check whether Snakemake master process is running
-pgrep -af snakemake
+pgrep -afu "$USER" snakemake
 
-# Detach from Screen without terminating the process:
-#
-# Ctrl+A, then D
-
+# Detach without terminating the workflow:
+# Press Ctrl+A, then D
 
 
 ###############################################################################
 # STEP 21. INSPECT BRAKER4 LOGS
 #
 # FREQUENCY: During annotation and troubleshooting.
-#
-# SLURM logs are stored inside the Snakemake working directory.
 ###############################################################################
 
 # Enter working directory
 cd /home/pranav/genome_assemblies/braker_work
 
-# List all SLURM logs
-find .snakemake/slurm_logs -type f
+# List Snakemake execution logs
+ls -ltr .snakemake/log/
 
-# Inspect a particular job log
-# Replace JOBID with the actual job ID.
-#
-# Example: prepare_genome job 7338
-tail -n 30 .snakemake/slurm_logs/rule_prepare_genome/V_komodoensis/7338.log
+# Inspect the latest Snakemake log
+LATEST_LOG=$(ls -t .snakemake/log/*.snakemake.log | head -1)
+tail -n 50 "$LATEST_LOG"
 
-# Follow a log in real time
-tail -f .snakemake/slurm_logs/rule_prepare_genome/V_komodoensis/7338.log
+# List BRAKER4 workflow logs
+find logs/V_komodoensis -type f -printf '%TY-%Tm-%Td %TH:%TM %p\n' | sort
 
+# Inspect GeneMark-ETP log, if available
+tail -n 30 logs/V_komodoensis/genemark_etp/genemark_etp.log
 
 
 ###############################################################################
@@ -896,6 +941,49 @@ export PATH="$HOME/software/apptainer/bin:$PATH"
 export APPTAINER_CACHEDIR=/home/pranav/apptainer_cache
 
 # Re-run the same Snakemake submission command from STEP 18.
+
+###############################################################################
+# STEP 22. RESUME AN INTERRUPTED WORKFLOW
+#
+# FREQUENCY: Only if Snakemake stops unexpectedly.
+###############################################################################
+
+# Check whether the previous Snakemake process has stopped
+pgrep -afu "$USER" snakemake
+
+# Check that no previous workflow instance is still running.
+# Do not launch another instance while the original is active.
+
+# Enter the same working directory
+cd /home/pranav/genome_assemblies/braker_work
+
+# Activate environment
+source ~/software/snakemake_env/bin/activate
+
+# Configure Apptainer
+export PATH="$HOME/software/apptainer/bin:$PATH"
+export APPTAINER_CACHEDIR=/home/pranav/apptainer_cache
+
+# Resume the workflow locally
+/home/pranav/software/snakemake_env/bin/snakemake \
+    --snakefile /home/pranav/software/BRAKER4/Snakefile \
+    --directory /home/pranav/genome_assemblies/braker_work \
+    --cores 26 \
+    --jobs 1 \
+    --resources mem_mb=120000 \
+    --default-resources "tmpdir='/home/pranav/genome_assemblies/braker_work/tmp'" \
+    --use-apptainer \
+    --apptainer-prefix .apptainer_cache \
+    --apptainer-args "-B /home" \
+    --latency-wait 120 \
+    --printshellcmds
+
+# IMPORTANT:
+# Do not delete:
+#   - .snakemake/
+#   - samples.csv
+#   - config.ini
+#   - Completed intermediate outputs
 #
 # IMPORTANT:
 # Do not delete:
@@ -918,16 +1006,17 @@ export APPTAINER_CACHEDIR=/home/pranav/apptainer_cache
 # Enter working directory
 cd /home/pranav/genome_assemblies/braker_work
 
-# Locate GFF3, GTF and FASTA outputs
-find . -type f \
-    \( -name "*.gff3" -o -name "*.gtf" \
-       -o -name "*.faa" -o -name "*.fna" \)
+# Inspect final annotation files
+ls -lh output/V_komodoensis/results/
 
-# Locate BUSCO and compleasm results
-find . \( -iname "*busco*" -o -iname "*compleasm*" \)
+# Inspect quality-control outputs
+ls -lh output/V_komodoensis/results/quality_control/
 
-# Check directory sizes
-du -sh *
+# Inspect completion marker
+ls -lh output/V_komodoensis/results/.done
+
+# Check directory size
+du -sh output/V_komodoensis/results/
 
 # IMPORTANT OUTPUTS TO RETAIN:
 #
@@ -958,9 +1047,11 @@ apptainer --version
 # Record Snakemake version
 snakemake --version
 
-# Record SLURM version
-sinfo --version
-
+# Record local execution configuration
+echo "Execution mode: Local Snakemake"
+echo "CPU limit: 26"
+echo "Concurrent jobs: 1"
+echo "Memory scheduling limit: 120000 MB"
 # Record BRAKER4 Git commit
 git -C ~/software/BRAKER4 log -1 --oneline
 
