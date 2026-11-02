@@ -53,9 +53,6 @@
 # Identify the operating system, scheduler and available compute resources.
 ###############################################################################
 
-# Check operating system
-cat /etc/os-release
-
 # Check available CPU threads
 nproc
 
@@ -151,10 +148,10 @@ export PATH="$HOME/software/apptainer/bin:$PATH"
 apptainer --version
 
 # Create dedicated Apptainer cache directory
-mkdir -p /home/pranav/apptainer_cache
+mkdir -p "$HOME/apptainer_cache"
 
 # Set cache directory
-export APPTAINER_CACHEDIR=/home/pranav/apptainer_cache
+export APPTAINER_CACHEDIR="$HOME/apptainer_cache"
 
 # Test cache write permissions
 touch "$APPTAINER_CACHEDIR/test_file"
@@ -671,14 +668,13 @@ done
 
 
 ###############################################################################
-# STEP 15. TEST APPTAINER ON COMPUTE NODE
+# STEP 15. TEST APPTAINER
 #
 # FREQUENCY:
-#   First use on HPC.
-#   Repeat after changes to Apptainer or the cluster environment.
+#   First use on a compute node.
+#   Repeat after changes to Apptainer or the system environment.
 #
-# This creates a short SLURM allocation and tests container execution
-# on a compute node.
+# This tests container execution directly on the current node.
 ###############################################################################
 
 # Test Apptainer directly on node01
@@ -723,7 +719,8 @@ apptainer --version
 # PURPOSE:
 #   Construct the Snakemake dependency graph without submitting jobs.
 #
-# Your previous successful dry run identified 38 jobs.
+# The successful V. komodoensis workflow completed 30 steps.
+# The number of jobs may vary with input data and workflow configuration.
 ###############################################################################
 
 snakemake \
@@ -750,30 +747,6 @@ snakemake \
 
 
 
-###############################################################################
-# STEP 18. SUBMIT BRAKER4 TO SLURM
-#
-# FREQUENCY: Once per annotation workflow.
-#
-# IMPORTANT:
-# Run this section inside a Screen session.
-# Do not submit another copy while the existing workflow is active.
-###############################################################################
-
-# Start a named Screen session
-screen -S braker4_komodo
-
-# Inside Screen, enter working directory
-cd /home/pranav/genome_assemblies/braker_work
-
-# Activate Snakemake
-source ~/software/snakemake_env/bin/activate
-
-# Configure Apptainer
-export PATH="$HOME/software/apptainer/bin:$PATH"
-
-export APPTAINER_CACHEDIR=/home/pranav/apptainer_cache
-
 # Submit BRAKER4 workflow
 ###############################################################################
 # STEP 18. RUN BRAKER4 LOCALLY
@@ -784,6 +757,20 @@ export APPTAINER_CACHEDIR=/home/pranav/apptainer_cache
 # Run this section inside a Screen session.
 # The workflow executes directly on node01.
 # No SLURM jobs are submitted.
+###############################################################################
+
+###############################################################################
+# STEP 18. RUN BRAKER4 LOCALLY
+#
+# FREQUENCY: Once per annotation workflow.
+#
+# EXECUTION MODE:
+#   Local execution on node01 using Snakemake and Apptainer.
+#   No SLURM jobs are submitted.
+#
+# IMPORTANT:
+# Run this section inside a Screen session.
+# Do not start another Snakemake instance while the workflow is active.
 ###############################################################################
 
 # Start a named Screen session
@@ -797,7 +784,7 @@ source ~/software/snakemake_env/bin/activate
 
 # Configure Apptainer
 export PATH="$HOME/software/apptainer/bin:$PATH"
-export APPTAINER_CACHEDIR=/home/pranav/apptainer_cache
+export APPTAINER_CACHEDIR="$HOME/apptainer_cache"
 
 # Run BRAKER4 locally
 /home/pranav/software/snakemake_env/bin/snakemake \
@@ -813,27 +800,20 @@ export APPTAINER_CACHEDIR=/home/pranav/apptainer_cache
     --latency-wait 120 \
     --printshellcmds
 
-# Detach from Screen:
+# Detach from Screen without terminating the workflow:
 # Press Ctrl+A, then D.
-
+#
 # IMPORTANT:
-# The command above starts the Snakemake master process.
-# Individual BRAKER4 rules are submitted as SLURM jobs.
+#   --cores 26: Maximum CPU threads available to Snakemake.
+#   --jobs 1: Run one Snakemake job at a time.
+#   --resources mem_mb=120000: Snakemake memory scheduling limit (120 GB).
+#   --use-apptainer: Execute tools inside Apptainer containers.
 #
-# To detach from Screen:
-#
-# Press Ctrl+A
-# Then press D
-#
-# This does not terminate Snakemake or the submitted SLURM jobs.
-
-
-
+# The workflow runs directly on node01.
+# Individual rules are executed locally, not submitted to SLURM.
 ###############################################################################
-# STEP 19. MONITOR SLURM JOBS
-#
-# FREQUENCY: Whenever required during annotation.
-###############################################################################
+
+
 
 ###############################################################################
 # STEP 19. MONITOR LOCAL COMPUTATION
@@ -1026,7 +1006,7 @@ du -sh output/V_komodoensis/results/
 # 4. Predicted transcript FASTA
 # 5. BUSCO completeness results
 # 6. Compleasm results
-# 7. Snakemake and SLURM logs
+# 7. Snakemake and BRAKER4 execution logs
 
 
 
@@ -1100,18 +1080,18 @@ echo "BUSCO lineage: sauropsida_odb12"
 #
 # BEFORE EACH ANNOTATION:
 #   STEP 14 - Input validation
-#   STEP 15 - Apptainer compute-node test when needed
+#   STEP 15 - Apptainer test when needed
 #   STEP 16 - Environment activation
 #   STEP 17 - Snakemake dry run
-#   STEP 18 - BRAKER4 submission
+#   STEP 18 - Local BRAKER4 execution
 #
 # DURING ANNOTATION:
-#   STEP 19 - SLURM monitoring
+#   STEP 19 - Local computation monitoring
 #   STEP 20 - Screen monitoring
 #   STEP 21 - Log inspection
 #
 # WHEN INTERRUPTED:
-#   STEP 22 - Resume workflow
+#   STEP 22 - Resume local workflow
 #
 # AFTER COMPLETION:
 #   STEP 23 - Inspect annotation outputs
