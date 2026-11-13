@@ -475,11 +475,17 @@ zcat -f "$RNA_R2" | awk 'END {print "R2 reads:", NR/4}'
 #   - Local Snakemake and workflow logs
 ###############################################################################
 
-# Create working directory
-mkdir -p /home/pranav/genome_assemblies/braker_work
+# Define species-specific working directory
+SPECIES=V_komodoensis
 
-# Enter working directory
-cd /home/pranav/genome_assemblies/braker_work
+WORKDIR=/home/pranav/genome_assemblies/NCBI_data/${SPECIES}_ncbi/braker_work
+
+# Create and enter working directory
+mkdir -p "$WORKDIR"
+cd "$WORKDIR"
+
+# Create logs directory
+mkdir -p logs
 
 # Create additional logs directory
 mkdir -p logs
@@ -520,6 +526,88 @@ cat > samples.csv << 'EOF'
 sample_name,genome,genome_masked,protein_fasta,bam_files,fastq_r1,fastq_r2,sra_ids,varus_genus,varus_species,isoseq_bam,isoseq_fastq,busco_lineage
 V_komodoensis,/home/pranav/genome_assemblies/NCBI_data/V_komodoensis_ncbi/genome/V_komo_genome.fasta,/home/pranav/genome_assemblies/NCBI_data/V_komodoensis_ncbi/repeat_analysis/RM_files/repeatmaskerout_softmaskedgenome/V_komo_genome.fasta.masked,/home/pranav/genome_assemblies/protein_evidence/OrthoDB_v12/Vertebrata.fa:/home/pranav/genome_assemblies/NCBI_data/V_komodoensis_ncbi/reptile_proteins/P_vitticeps_protein.faa:/home/pranav/genome_assemblies/NCBI_data/V_komodoensis_ncbi/reptile_proteins/E_macularius_protein.faa:/home/pranav/genome_assemblies/NCBI_data/V_komodoensis_ncbi/reptile_proteins/A_mississippiensis_protein.faa,,/home/pranav/genome_assemblies/NCBI_data/V_komodoensis_ncbi/transcriptome_data/SRR8735152_1.fastq,/home/pranav/genome_assemblies/NCBI_data/V_komodoensis_ncbi/transcriptome_data/SRR8735152_2.fastq,,,,,,sauropsida_odb12
 EOF
+
+
+###############################################################################
+# VALIDATE PROTEIN EVIDENCE
+#
+# Check protein FASTA formatting before combining databases.
+###############################################################################
+
+# Define protein evidence files
+PROTEINS=(
+    "$HOME/genome_assemblies/protein_evidence/OrthoDB_v12/Vertebrata.fa"
+    "$HOME/genome_assemblies/protein_evidence/reptile_proteins/P_vitticeps_protein.faa"
+    "$HOME/genome_assemblies/protein_evidence/reptile_proteins/E_macularius_protein.faa"
+    "$HOME/genome_assemblies/protein_evidence/reptile_proteins/A_mississippiensis_protein.faa"
+)
+
+# Check file existence and non-zero size
+for file in "${PROTEINS[@]}"; do
+    if [[ ! -s "$file" ]]; then
+        echo "ERROR: Missing or empty protein file: $file"
+        exit 1
+    fi
+
+    echo "OK: $file"
+done
+
+# Check for non-standard protein sequence characters
+python3 - "${PROTEINS[@]}" <<'PY'
+import sys
+import re
+
+allowed = set("ABCDEFGHIJKLMNOPQRSTUVWXYZ*-")
+
+for filename in sys.argv[1:]:
+    print(f"\nChecking: {filename}")
+
+    records = 0
+    errors = 0
+    current_id = None
+    has_sequence = False
+
+    with open(filename) as f:
+        for line_no, line in enumerate(f, 1):
+            if not line.strip():
+                continue
+
+            if line.startswith(">"):
+                if current_id is not None and not has_sequence:
+                    print(f"Empty sequence: {current_id}")
+                    errors += 1
+
+                current_id = line[1:].split()[0] if line[1:].split() else None
+                has_sequence = False
+                records += 1
+
+            else:
+                seq = re.sub(r"\s+", "", line).upper()
+
+                if current_id is None:
+                    print(f"Sequence before header at line {line_no}")
+                    errors += 1
+                    continue
+
+                invalid = set(seq) - allowed
+
+                if invalid:
+                    print(f"Invalid characters at line {line_no}: {invalid}")
+                    errors += 1
+
+                has_sequence = True
+
+    if current_id is not None and not has_sequence:
+        print(f"Empty sequence: {current_id}")
+        errors += 1
+
+    print(f"Records: {records}")
+    print(f"Errors: {errors}")
+
+    if errors:
+        sys.exit(1)
+PY
+
 
 # Display sample sheet
 column -s, -t samples.csv
@@ -665,7 +753,18 @@ done
 # IMPORTANT:
 # Do not proceed if a required file is missing or empty.
 
+###############################################################################
+# CHECK GENOME AND SOFTMASKED GENOME CONSISTENCY
+###############################################################################
 
+echo "===== Genome sequence count ====="
+grep -c "^>" "$GENOME"
+
+echo "===== Softmasked genome sequence count ====="
+grep -c "^>" "$MASKED_GENOME"
+
+echo "===== Genome and masked genome sizes ====="
+du -h "$GENOME" "$MASKED_GENOME"
 
 ###############################################################################
 # STEP 15. TEST APPTAINER
@@ -746,6 +845,96 @@ snakemake \
 # A dry run does not submit actual annotation jobs.
 
 
+###############################################################################
+# CHECK GENEMARK-ETP PROTEIN DATABASE CONSISTENCY
+#
+# FREQUENCY:
+#   Before resuming a workflow after changing protein evidence.
+#   Before rerunning a failed GeneMark-ETP stage.
+###############################################################################
+
+# Define sample and GeneMark directories
+SAMPLE=V_komodoensis
+
+GM_DIR="output/${SAMPLE}/GeneMark-ETP"
+
+# Check whether GeneMark configuration exists
+if [[ -d "$GM_DIR" ]]; then
+
+    GM_CONFIG=$(find "$GM_DIR" -maxdepth 1 -name "*.yaml" -print -quit)
+
+    if [[ -n "$GM_CONFIG" ]]; then
+
+        echo "===== GeneMark protein configuration ====="
+
+        PROTEIN_DB=$(awk -F': ' '$1=="protdb_path" {
+            print $2
+        }' "$GM_CONFIG")
+
+        echo "Configured database: $PROTEIN_DB"
+
+        # Check configured database
+        if [[ ! -s "$PROTEIN_DB" ]]; then
+            echo "ERROR: Configured protein database missing or empty."
+            exit 1
+        fi
+
+        # Check existing GeneMark intermediates
+        for file in \
+            "$GM_DIR/arx/proteins.fa" \
+            "$GM_DIR/data/proteins.fa"
+        do
+            if [[ -e "$file" ]]; then
+                echo "Existing intermediate: $file"
+                ls -lh "$file"
+            else
+                echo "Not present: $file"
+            fi
+        done
+
+        # Compare original input with GeneMark's copied input
+        if [[ -s "$GM_DIR/arx/proteins.fa" ]]; then
+
+            if cmp -s "$PROTEIN_DB" "$GM_DIR/arx/proteins.fa"; then
+                echo "OK: GeneMark input matches configured database."
+            else
+                echo "WARNING: GeneMark input differs from configured database."
+                echo "Investigate stale intermediate before resuming."
+            fi
+
+        fi
+
+    else
+        echo "No existing GeneMark YAML configuration."
+        echo "This appears to be a first GeneMark run."
+    fi
+
+else
+    echo "No existing GeneMark-ETP directory."
+    echo "This appears to be a first annotation run."
+fi.
+
+
+###############################################################################
+# IF THE PROTEIN DATABASE HAS CHANGED:
+#
+# Preserve and move stale GeneMark intermediates before rerunning.
+# Execute only after confirming that the configured database is correct.
+###############################################################################
+
+# Example for V. komodoensis:
+#
+# mkdir -p "$GM_DIR/stale_backup"
+#
+# mv "$GM_DIR/arx/proteins.fa" \
+#    "$GM_DIR/stale_backup/proteins.fa.previous"
+#
+# mv "$GM_DIR/data/proteins.fa" \
+#    "$GM_DIR/stale_backup/proteins.fa.reformatted_previous"
+#
+# Do not execute these commands automatically during ordinary resumption.
+
+
 
 # Submit BRAKER4 workflow
 ###############################################################################
@@ -777,7 +966,7 @@ snakemake \
 screen -S braker_new
 
 # Enter working directory
-cd /home/pranav/genome_assemblies/braker_work
+cd "$WORKDIR"
 
 # Activate Snakemake environment
 source ~/software/snakemake_env/bin/activate
@@ -789,11 +978,11 @@ export APPTAINER_CACHEDIR="$HOME/apptainer_cache"
 # Run BRAKER4 locally
 /home/pranav/software/snakemake_env/bin/snakemake \
     --snakefile /home/pranav/software/BRAKER4/Snakefile \
-    --directory /home/pranav/genome_assemblies/braker_work \
+    --directory "$WORKDIR" \
     --cores 26 \
     --jobs 1 \
     --resources mem_mb=120000 \
-    --default-resources "tmpdir='/home/pranav/genome_assemblies/braker_work/tmp'" \
+    --default-resources "tmpdir='${WORKDIR}/tmp'" \
     --use-apptainer \
     --apptainer-prefix .apptainer_cache \
     --apptainer-args "-B /home" \
@@ -1048,6 +1237,25 @@ echo "RNA-seq accession: SRR8735152"
 echo "BUSCO lineage: sauropsida_odb12"
 
 
+###############################################################################
+# RECORD INPUT FILE CHECKSUMS
+###############################################################################
+
+# Genome and masked genome
+sha256sum "$GENOME" "$MASKED_GENOME" \
+    > input_genome_checksums.sha256
+
+# Protein evidence
+sha256sum "${PROTEINS[@]}" \
+    > input_protein_checksums.sha256
+
+# RNA-seq evidence
+sha256sum "$RNA_R1" "$RNA_R2" \
+    > input_rnaseq_checksums.sha256
+
+# Record BRAKER4 repository commit
+git -C ~/software/BRAKER4 rev-parse HEAD \
+    > braker4_commit.txt
 ###############################################################################
 # END OF BRAKER4 GENE ANNOTATION PROTOCOL
 ###############################################################################
