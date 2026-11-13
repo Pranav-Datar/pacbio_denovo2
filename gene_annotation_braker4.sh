@@ -333,17 +333,21 @@ head -n 10 Vertebrata.fa
 # Their original accessions and download URLs must be recorded by the user.
 ###############################################################################
 
-# Create reptile protein directory
-mkdir -p ~/genome_assemblies/NCBI_data/V_komodoensis_ncbi/reptile_proteins
+# Create shared reptile protein evidence directory
+mkdir -p ~/genome_assemblies/protein_evidence/reptile_proteins
 
-# Enter directory
-cd ~/genome_assemblies/NCBI_data/V_komodoensis_ncbi/reptile_proteins
+cd ~/genome_assemblies/protein_evidence/reptile_proteins
 
-# Place the following files in this directory:
-#
-# P_vitticeps_protein.faa
-# E_macularius_protein.faa
-# A_mississippiensis_protein.faa
+# Place the protein FASTAs selected for this annotation here.
+# Examples:
+# V_komodoensis_protein.faa
+# A_carolinensis_protein.faa
+# N_naja_protein_decompressed.faa
+# G_gallus_protein_decompressed.faa
+# M_musculus_proteins_decompressed.faa
+# H_sapiens_proteins_decompressed.faa
+
+ls -lh
 
 # Check file sizes
 ls -lh *.faa
@@ -519,7 +523,7 @@ mkdir -p logs
 ###############################################################################
 
 # Enter working directory
-cd /home/pranav/genome_assemblies/braker_work
+cd "$WORKDIR"
 
 # Create sample sheet
 cat > samples.csv << 'EOF'
@@ -657,7 +661,7 @@ awk -F',' '{print NF}' samples.csv
 ###############################################################################
 
 # Enter working directory
-cd /home/pranav/genome_assemblies/braker_work
+cd "$WORKDIR"
 
 # Create configuration file
 cat > config.ini << 'EOF'
@@ -798,7 +802,7 @@ export PATH="$HOME/software/apptainer/bin:$PATH"
 export APPTAINER_CACHEDIR=/home/pranav/apptainer_cache
 
 # Enter BRAKER4 working directory
-cd /home/pranav/genome_assemblies/braker_work
+cd "$WORKDIR"
 
 # Check Snakemake
 snakemake --version
@@ -824,12 +828,12 @@ apptainer --version
 
 snakemake \
     --snakefile /home/pranav/software/BRAKER4/Snakefile \
-    --directory /home/pranav/genome_assemblies/braker_work \
+    --directory "$WORKDIR" \
     --dry-run \
     --cores 26 \
     --jobs 1 \
     --resources mem_mb=120000 \
-    --default-resources "tmpdir='/home/pranav/genome_assemblies/braker_work/tmp'" \
+    --default-resources "tmpdir='${WORKDIR}/tmp'" \
     --use-apptainer \
     --apptainer-prefix .apptainer_cache \
     --apptainer-args "-B /home" \
